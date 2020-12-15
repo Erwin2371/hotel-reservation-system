@@ -168,12 +168,12 @@
    <top>
       <AnchorPane prefHeight="69.0" prefWidth="901.0" style="-fx-background-color: #25A7F8;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="221.0" layoutY="16.0" text="Booking Informations" textFill="WHITE">
+            <Label layoutX="233.0" layoutY="18.0" text="Booking Informations" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="25.0" />
                </font>
             </Label>
-            <Label layoutX="769.0" layoutY="22.0" text="Date" textFill="WHITE">
+            <Label fx:id="dateTime" layoutX="900.0" layoutY="23.0" text="Date" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>

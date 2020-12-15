@@ -70,7 +70,7 @@
                         <Insets />
                      </GridPane.margin>
                   </JFXButton>
-                  <JFXButton fx:id="btnEditBooking" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" prefHeight="235.0" prefWidth="212.0" ripplerFill="WHITE" style="-fx-background-color: #25A7F8; -fx-background-radius: 30;" text="Modify Booking" textFill="WHITE" GridPane.columnIndex="1">
+                  <JFXButton fx:id="btnEditBooking" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" onAction="#Booking" prefHeight="235.0" prefWidth="212.0" ripplerFill="WHITE" style="-fx-background-color: #25A7F8; -fx-background-radius: 30;" text="Modify Booking" textFill="WHITE" GridPane.columnIndex="1">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -91,8 +91,13 @@
                <children>
                   <AnchorPane prefHeight="91.0" prefWidth="178.0" style="-fx-background-color: #25A7F8; -fx-background-radius: 10;">
                      <children>
-                        <FontAwesomeIconView fill="WHITE" glyphName="BED" layoutX="21.0" layoutY="52.0" size="20" />
-                        <Label layoutX="66.0" layoutY="35.0" text="Available Rooms :" textFill="WHITE">
+                        <FontAwesomeIconView fill="WHITE" glyphName="BED" layoutX="14.0" layoutY="54.0" size="20" />
+                        <Label layoutX="47.0" layoutY="37.0" text="Available Rooms :" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="190.0" layoutY="37.0" text="Label" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
@@ -101,8 +106,13 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="91.0" prefWidth="243.0" style="-fx-background-color: #25A7F8; -fx-background-radius: 10;" GridPane.columnIndex="1">
                      <children>
-                        <FontAwesomeIconView fill="WHITE" glyphName="USERS" layoutX="21.0" layoutY="52.0" size="20" />
-                        <Label layoutX="56.0" layoutY="33.0" text="Guests : " textFill="WHITE">
+                        <FontAwesomeIconView fill="WHITE" glyphName="USERS" layoutX="42.0" layoutY="52.0" size="20" />
+                        <Label layoutX="73.0" layoutY="33.0" text="Guests : " textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="162.0" layoutY="33.0" text="Label" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
@@ -122,7 +132,7 @@
                   <Font name="System Bold" size="25.0" />
                </font>
             </Label>
-            <Label layoutX="760.0" layoutY="23.0" text="Date" textFill="WHITE">
+            <Label fx:id="dateTime" layoutX="900.0" layoutY="23.0" text="Date" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>

@@ -9,25 +9,12 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
-import javaassignment.LoginController;
-import javaassignment.HomeController;
 
 /**
  * FXML Controller class
@@ -36,6 +23,9 @@ import javaassignment.HomeController;
  */
 public class BookingsController implements Initializable {
 
+    LoginController login = new LoginController();
+    HomeController home = new HomeController();
+    
     @FXML
     private Label BIDlb;
     @FXML
@@ -52,9 +42,7 @@ public class BookingsController implements Initializable {
     private Spinner<?> Infonightstxt;
     @FXML
     private Label TotalPaymentlb;
-    
-    LoginController login = new LoginController();
-    HomeController home = new HomeController();
+
     @FXML
     private JFXButton btnHome;
     @FXML
@@ -67,33 +55,26 @@ public class BookingsController implements Initializable {
     private JFXButton btnDelete;
     @FXML
     private JFXButton btnEdit;
+    @FXML
+    private Label dateTime;
     /**
      * Initializes the controller class.
      */
+    
+    FXMain main = new FXMain();
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        main.showTime(dateTime);
     }   
 
     @FXML
     private void Logout(ActionEvent event) throws IOException {
-        home.Logout(event);
+        main.Logout(event);
     }  
     
     @FXML
     private void Home(ActionEvent event) throws IOException {
-        login.Home(event);
+        main.Login(event);
     }
-    
-//    @FXML
-//    private void handleClicks (ActionEvent event) {
-//        if(event.getSource() == btnBookings)
-//        {
-//
-//        }
-//        else if (event.getSource() == btnHome)
-//        {
-//            
-//        }
-//    }
 }
