@@ -12,16 +12,22 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
  *
  * @author user
  */
-public class BookingsController implements Initializable {
+public class BookingInfoController implements Initializable {
 
     LoginController login = new LoginController();
     HomeController home = new HomeController();
@@ -67,7 +73,18 @@ public class BookingsController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         main.showTime(dateTime);
     }   
-
+    
+    @FXML
+    private void Back(MouseEvent event) throws IOException {
+        Parent HomeView = FXMLLoader.load(getClass().getResource("Home.fxml"));
+        Scene HomeViewScene = new Scene(HomeView);
+        
+        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        
+        window.setScene(HomeViewScene);
+        window.show();
+    }
+    
     @FXML
     private void Logout(ActionEvent event) throws IOException {
         main.Logout(event);

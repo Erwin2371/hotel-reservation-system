@@ -28,20 +28,25 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
+class Staff {
+    protected String Username;
+    protected String Password;
+}
+
 public class LoginController implements Initializable {
     
     @FXML
-    private JFXTextField Unametxt;
+    protected JFXTextField Unametxt;
     @FXML
     private JFXButton Loginbtn;
     @FXML
-    private JFXPasswordField Passtxt;
+    protected JFXPasswordField Passtxt;
 
     private int line;
     @FXML
     private JFXCheckBox shpass;
     @FXML
-    private JFXTextField Passtxt2;
+    protected JFXTextField Passtxt2;
     /**
      * Initializes the controller class.
      */
@@ -52,11 +57,13 @@ public class LoginController implements Initializable {
         
     }   
     FXMain main = new FXMain();
-    File file = new File("C:\\Program Files\\GitHub\\Lmao\\JP Assignment");
+    Staff staff = new Staff();
+    File file = new File(".Data");
 
     private void createFolder(){
         if(!file.exists()){
             file.mkdir();
+            System.out.println("Directory created");
         }
         else{
             System.err.println("Directory Exists");
@@ -77,7 +84,7 @@ public class LoginController implements Initializable {
         }
     }
     
-    private void addCred(String uname, String pass) {
+    protected void addCred(String uname, String pass) {
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "rw");
             
@@ -97,7 +104,8 @@ public class LoginController implements Initializable {
     }
 
     
-    private void checkCred(String uname, String pass, ActionEvent event) {
+    protected void checkCred(String uname, String pass, ActionEvent event) {
+          
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "r");
             
@@ -110,8 +118,10 @@ public class LoginController implements Initializable {
                 if(uname.equals(username) && pass.equals(password)){
                     alert.setTitle("Login");
                     alert.setHeaderText("Login Success");
+                    staff.Username = username;
+                    staff.Password = password;
                     Optional<ButtonType> result = alert.showAndWait();
-
+                    
                     if(result.get() == ButtonType.OK && result.isPresent()){
                         main.Login(event);
                     }
@@ -136,7 +146,7 @@ public class LoginController implements Initializable {
         }
     }
     
-    private boolean validateReg(String a) {
+    protected boolean validateReg(String a) {
         boolean exist = false;
         
         try {
@@ -165,7 +175,7 @@ public class LoginController implements Initializable {
         return exist;
     }
     
-    private void countLines() {
+    protected void countLines() {
         try {
             line = 0;
             RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "rw");
@@ -185,17 +195,45 @@ public class LoginController implements Initializable {
     private void Login(ActionEvent event) throws IOException{
         String a = Unametxt.getText();
         String b = Passtxt.getText();
+        String c = Passtxt2.getText();
+        
         if(a.isEmpty() && b.isEmpty()){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Login Error");
             alert.setHeaderText("Username and Password are empty");
             alert.showAndWait();
+        }else if(shpass.isSelected()){          
+            countLines();
+            checkCred(a, c, event);
         }else{
             countLines();
             checkCred(a, b, event);
         }
     }  
 
+    @FXML
+    private void ShowPass(MouseEvent event) {
+        String a = Passtxt.getText();
+        String b = Passtxt2.getText();
+                
+        if(shpass.isSelected()){
+            Passtxt.setVisible(false);
+            Passtxt2.setVisible(true);
+            Passtxt2.setText(a);
+            Passtxt2.setEditable(true);
+            Passtxt2.setDisable(false);
+            if(a.isEmpty()){
+                Passtxt2.setPromptText("Password");
+            }
+        }
+        else if(!shpass.isSelected()){
+            Passtxt.setVisible(true);
+            Passtxt2.setVisible(false);
+            Passtxt.setText(b);
+            Passtxt2.setEditable(false);
+        }
+    }
+    
     @FXML
     private void Register(ActionEvent event) throws IOException{
         String a = Unametxt.getText();
@@ -222,27 +260,5 @@ public class LoginController implements Initializable {
             addCred(a, b);
         }
     }
-
-    @FXML
-    private void ShowPass(MouseEvent event) {
-        String a = Passtxt.getText();
-        String b = Passtxt2.getText();
-                
-        if(shpass.isSelected()){
-            Passtxt.setVisible(false);
-            Passtxt2.setVisible(true);
-            Passtxt2.setText(a);
-            Passtxt2.setEditable(true);
-            Passtxt2.setDisable(false);
-            if(a.isEmpty()){
-                Passtxt2.setPromptText("Password");
-            }
-        }
-        else if(!shpass.isSelected()){
-            Passtxt.setVisible(true);
-            Passtxt2.setVisible(false);
-            Passtxt.setText(b);
-            Passtxt2.setEditable(false);
-        }
-    }
 }
+

@@ -34,7 +34,7 @@ public class FXMain extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("AddBooking.fxml"));
         Scene scene = new Scene(root);
         primaryStage.initStyle(StageStyle.DECORATED);
         primaryStage.setScene(scene);
@@ -73,7 +73,7 @@ public class FXMain extends Application {
     protected void Logout(ActionEvent event) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit");
-        alert.setHeaderText("Are you sure you want to exit?");
+        alert.setHeaderText("Are you sure you want to Logout?");
        
         alert.setGraphic(new ImageView(this.getClass().getResource("warning.png").toString()));
         
@@ -84,14 +84,14 @@ public class FXMain extends Application {
 
             Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
 
-            window.setScene(LoginViewScene);
+            window.setScene(LoginViewScene); 
             window.show();
         }
     } 
     
     @FXML
     protected void Booking(ActionEvent event) throws IOException{
-        Parent BookingView = FXMLLoader.load(getClass().getResource("Bookings.fxml"));
+        Parent BookingView = FXMLLoader.load(getClass().getResource("BookingInfo.fxml"));
         Scene BookingViewScene = new Scene(BookingView);
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
