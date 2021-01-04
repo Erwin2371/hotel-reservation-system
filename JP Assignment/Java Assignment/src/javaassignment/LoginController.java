@@ -34,19 +34,19 @@ class Staff {
 }
 
 public class LoginController implements Initializable {
-    
-    @FXML
-    protected JFXTextField Unametxt;
-    @FXML
-    private JFXButton Loginbtn;
-    @FXML
-    protected JFXPasswordField Passtxt;
-
     private int line;
     @FXML
-    private JFXCheckBox shpass;
+    private JFXTextField txtUname;
     @FXML
-    protected JFXTextField Passtxt2;
+    private JFXPasswordField txtPass;
+    @FXML
+    private JFXCheckBox cbShowPass;
+    @FXML
+    private JFXButton btnLogin;
+    @FXML
+    private JFXButton btnRegister;
+    @FXML
+    private JFXTextField txtPass2;
     /**
      * Initializes the controller class.
      */
@@ -193,16 +193,16 @@ public class LoginController implements Initializable {
     
     @FXML
     private void Login(ActionEvent event) throws IOException{
-        String a = Unametxt.getText();
-        String b = Passtxt.getText();
-        String c = Passtxt2.getText();
+        String a = txtUname.getText();
+        String b = txtPass.getText();
+        String c = txtPass2.getText();
         
         if(a.isEmpty() && b.isEmpty()){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Login Error");
             alert.setHeaderText("Username and Password are empty");
             alert.showAndWait();
-        }else if(shpass.isSelected()){          
+        }else if(cbShowPass.isSelected()){          
             countLines();
             checkCred(a, c, event);
         }else{
@@ -213,31 +213,31 @@ public class LoginController implements Initializable {
 
     @FXML
     private void ShowPass(MouseEvent event) {
-        String a = Passtxt.getText();
-        String b = Passtxt2.getText();
+        String a = txtPass.getText();
+        String b = txtPass2.getText();
                 
-        if(shpass.isSelected()){
-            Passtxt.setVisible(false);
-            Passtxt2.setVisible(true);
-            Passtxt2.setText(a);
-            Passtxt2.setEditable(true);
-            Passtxt2.setDisable(false);
+        if(cbShowPass.isSelected()){
+            txtPass.setVisible(false);
+            txtPass2.setVisible(true);
+            txtPass2.setText(a);
+            txtPass2.setEditable(true);
+            txtPass2.setDisable(false);
             if(a.isEmpty()){
-                Passtxt2.setPromptText("Password");
+                txtPass2.setPromptText("Password");
             }
         }
-        else if(!shpass.isSelected()){
-            Passtxt.setVisible(true);
-            Passtxt2.setVisible(false);
-            Passtxt.setText(b);
-            Passtxt2.setEditable(false);
+        else if(!cbShowPass.isSelected()){
+            txtPass.setVisible(true);
+            txtPass2.setVisible(false);
+            txtPass.setText(b);
+            txtPass2.setEditable(false);
         }
     }
     
     @FXML
     private void Register(ActionEvent event) throws IOException{
-        String a = Unametxt.getText();
-        String b = Passtxt.getText();
+        String a = txtUname.getText();
+        String b = txtPass.getText();
         countLines();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         if(a.isEmpty() && b.isEmpty()){

@@ -7,6 +7,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -21,7 +22,7 @@
          <children>
             <VBox alignment="TOP_CENTER" prefHeight="374.0" prefWidth="221.0">
                <children>
-                  <JFXButton fx:id="Homebtn" alignment="BASELINE_LEFT" graphicTextGap="10.0" onAction="#Home" prefHeight="95.0" prefWidth="221.0" style="-jfx-disable-visual-focus: true;" text="Home" textFill="WHITE">
+                  <JFXButton fx:id="btnHome" alignment="BASELINE_LEFT" graphicTextGap="10.0" onAction="#Home" prefHeight="95.0" prefWidth="221.0" style="-jfx-disable-visual-focus: true;" text="Home" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -29,7 +30,7 @@
                         <FontAwesomeIconView fill="WHITE" glyphName="HOME" size="25" />
                      </graphic>
                   </JFXButton>
-                  <JFXButton fx:id="Bookingsbtn" alignment="BASELINE_LEFT" graphicTextGap="10.0" onAction="#Booking" prefHeight="95.0" prefWidth="221.0" style="-fx-background-color: #0A85ED; -fx-border-width: 0 0 0 5px; -fx-border-color: white;" text="Bookings" textFill="WHITE">
+                  <JFXButton fx:id="btnBooking" alignment="BASELINE_LEFT" graphicTextGap="10.0" onAction="#Booking" prefHeight="95.0" prefWidth="221.0" style="-fx-background-color: #0A85ED; -fx-border-width: 0 0 0 5px; -fx-border-color: white;" text="Bookings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -39,7 +40,7 @@
                   </JFXButton>
                </children>
             </VBox>
-            <JFXButton fx:id="Logoutbtn" alignment="CENTER" onAction="#Logout" prefHeight="78.0" prefWidth="221.0" text="Logout" textFill="WHITE">
+            <JFXButton fx:id="btnLogout" alignment="CENTER" onAction="#Logout" prefHeight="78.0" prefWidth="221.0" text="Logout" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
@@ -57,7 +58,10 @@
                <children>
                   <AnchorPane prefHeight="80.0" prefWidth="382.0">
                      <children>
-                        <JFXTextField fx:id="Rnamtxt" layoutX="159.0" layoutY="25.0" prefHeight="31.0" prefWidth="185.0" />
+                        <JFXTextField fx:id="txtRname" layoutX="159.0" layoutY="25.0" prefHeight="31.0" prefWidth="185.0">
+                           <tooltip>
+                              <Tooltip text="e.g: John Doe" />
+                           </tooltip></JFXTextField>
                         <Label layoutX="24.0" layoutY="28.0" text="Reservee Name :">
                            <font>
                               <Font size="16.0" />
@@ -67,7 +71,10 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="82.0" prefWidth="382.0">
                      <children>
-                        <JFXTextField fx:id="Contacttxt" layoutX="161.0" layoutY="29.0" prefHeight="31.0" prefWidth="184.0" />
+                        <JFXTextField fx:id="txtContact" layoutX="161.0" layoutY="29.0" prefHeight="31.0" prefWidth="184.0">
+                           <tooltip>
+                              <Tooltip text="e.g: 012-3456789" />
+                           </tooltip></JFXTextField>
                         <Label layoutX="14.0" layoutY="32.0" text="Contact Number :">
                            <font>
                               <Font size="16.0" />
@@ -77,7 +84,10 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="82.0" prefWidth="382.0">
                      <children>
-                        <JFXTextField fx:id="ICtxt" layoutX="155.0" layoutY="26.0" prefHeight="31.0" prefWidth="190.0" />
+                        <JFXTextField fx:id="txtIC" layoutX="157.0" layoutY="26.0" prefHeight="31.0" prefWidth="190.0">
+                           <tooltip>
+                              <Tooltip text="e.g: 010123-45-6789" />
+                           </tooltip></JFXTextField>
                         <Label layoutX="58.0" layoutY="31.0" text="IC Number :" />
                      </children>
                   </AnchorPane>
@@ -87,14 +97,17 @@
                <children>
                   <AnchorPane prefHeight="80.0" prefWidth="382.0">
                      <children>
-                        <JFXDatePicker fx:id="Datetxt" defaultColor="#2d8bff" editable="false" layoutX="169.0" layoutY="25.0" prefHeight="31.0" prefWidth="208.0" />
+                        <JFXDatePicker fx:id="txtDate" defaultColor="#4059a9" editable="false" layoutX="169.0" layoutY="25.0" prefHeight="31.0" prefWidth="208.0" />
                         <Label layoutX="99.0" layoutY="30.0" text="Date :" />
                      </children>
                   </AnchorPane>
                   <AnchorPane prefHeight="82.0" prefWidth="382.0">
                      <children>
                         <Label layoutX="90.0" layoutY="31.0" text="Nights :" />
-                        <Spinner fx:id="NumNightsSpinner" editable="true" layoutX="165.0" layoutY="26.0" />
+                        <Spinner fx:id="NumNightsSpinner" editable="true" layoutX="165.0" layoutY="26.0">
+                           <tooltip>
+                              <Tooltip text="min: 1, max: 31" />
+                           </tooltip></Spinner>
                      </children>
                   </AnchorPane>
                   <AnchorPane prefHeight="82.0" prefWidth="382.0" />
@@ -123,16 +136,16 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <JFXToggleButton text="1A" />
-                  <JFXToggleButton text="2A" GridPane.rowIndex="1" />
-                  <JFXToggleButton text="3A" GridPane.rowIndex="2" />
-                  <JFXToggleButton text="5A" GridPane.rowIndex="4" />
-                  <JFXToggleButton text="6A" GridPane.columnIndex="1" />
-                  <JFXToggleButton text="7A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <JFXToggleButton text="8A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <JFXToggleButton text="9A" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <JFXToggleButton text="10A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <JFXToggleButton text="4A" GridPane.rowIndex="3" />
+                  <JFXToggleButton fx:id="tb_1A" text="1A" />
+                  <JFXToggleButton fx:id="tb_2A" text="2A" GridPane.rowIndex="1" />
+                  <JFXToggleButton fx:id="tb_3A" text="3A" GridPane.rowIndex="2" />
+                  <JFXToggleButton fx:id="tb_5A" text="5A" GridPane.rowIndex="4" />
+                  <JFXToggleButton fx:id="tb_6A" text="6A" GridPane.columnIndex="1" />
+                  <JFXToggleButton fx:id="tb_7A" text="7A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <JFXToggleButton fx:id="tb_8A" text="8A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <JFXToggleButton fx:id="tb_9A" text="9A" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <JFXToggleButton fx:id="tb_10A" text="10A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <JFXToggleButton fx:id="tb_4A" text="4A" GridPane.rowIndex="3" />
                </children>
             </GridPane>
             <Label layoutX="391.0" layoutY="375.0" text="Level 2 Rooms">
@@ -165,7 +178,7 @@
                   <JFXToggleButton text="4B" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <JFXButton fx:id="Bookbtn" layoutX="688.0" layoutY="586.0" onAction="#createbooking" prefHeight="59.0" prefWidth="126.0" style="-fx-background-color: #00E016; -fx-background-radius: 10;" text="BOOK" textFill="WHITE">
+            <JFXButton fx:id="btnBook" layoutX="688.0" layoutY="586.0" onAction="#createbooking" prefHeight="59.0" prefWidth="126.0" style="-fx-background-color: #00E016; -fx-background-radius: 10;" text="BOOK" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="19.0" />
                </font>
@@ -175,12 +188,12 @@
                   <Font size="19.0" />
                </font>
             </Label>
-            <Label fx:id="Feeslb" layoutX="772.0" layoutY="404.0" prefHeight="22.0" prefWidth="64.0" text="Label">
+            <Label fx:id="lblFees" layoutX="772.0" layoutY="404.0" prefHeight="28.0" prefWidth="94.0" text="Label">
                <font>
                   <Font size="19.0" />
                </font>
             </Label>
-            <Label fx:id="Taxlb" layoutX="772.0" layoutY="456.0" prefHeight="22.0" prefWidth="64.0" text="Label">
+            <Label fx:id="lblTax" layoutX="772.0" layoutY="456.0" prefHeight="28.0" prefWidth="94.0" text="Label">
                <font>
                   <Font size="19.0" />
                </font>
@@ -190,7 +203,7 @@
                   <Font size="19.0" />
                </font>
             </Label>
-            <Label fx:id="Totalfeeslb" layoutX="772.0" layoutY="510.0" prefHeight="22.0" prefWidth="64.0" text="Label">
+            <Label fx:id="lblTotalfees" layoutX="772.0" layoutY="510.0" prefHeight="28.0" prefWidth="94.0" text="Label">
                <font>
                   <Font size="19.0" />
                </font>

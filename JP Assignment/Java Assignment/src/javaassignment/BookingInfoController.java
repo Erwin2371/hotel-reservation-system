@@ -31,23 +31,7 @@ public class BookingInfoController implements Initializable {
 
     LoginController login = new LoginController();
     HomeController home = new HomeController();
-    
-    @FXML
-    private Label BIDlb;
-    @FXML
-    private Label Rnamelb;
-    @FXML
-    private Label Contactlb;
-    @FXML
-    private Label IClb;
-    @FXML
-    private JFXDatePicker Infodatetxt;
-    @FXML
-    private Spinner<?> Inforoomstxt;
-    @FXML
-    private Spinner<?> Infonightstxt;
-    @FXML
-    private Label TotalPaymentlb;
+    FXMain main = new FXMain();
 
     @FXML
     private JFXButton btnHome;
@@ -63,11 +47,20 @@ public class BookingInfoController implements Initializable {
     private JFXButton btnEdit;
     @FXML
     private Label dateTime;
-    /**
-     * Initializes the controller class.
-     */
-    
-    FXMain main = new FXMain();
+    @FXML
+    private Label lblBookingID;
+    @FXML
+    private Label lblRname;
+    @FXML
+    private Label lblContact;
+    @FXML
+    private Label lblIC;
+    @FXML
+    private JFXDatePicker txtDate;
+    @FXML
+    private Spinner<?> txtNights;
+    @FXML
+    private Label lblTotalPayment;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
