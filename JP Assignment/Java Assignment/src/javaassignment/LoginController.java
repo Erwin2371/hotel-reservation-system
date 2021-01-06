@@ -72,11 +72,11 @@ public class LoginController implements Initializable {
     
     private void readfile() {
         try {
-            FileReader filer = new FileReader(file + "\\login.txt");
+            FileReader filer = new FileReader(file + "\\Login.txt");
             System.err.println("File exists!");
         } catch (FileNotFoundException e) {
             try {
-                FileWriter fw = new FileWriter(file + "\\login.txt");
+                FileWriter fw = new FileWriter(file + "\\Login.txt");
             } catch (IOException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -84,9 +84,9 @@ public class LoginController implements Initializable {
         }
     }
     
-    protected void addCred(String uname, String pass) {
+    private void addCred(String uname, String pass) {
         try {
-            RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "rw");
+            RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "rw");
             
             for(int i=0; i<line; i++){
                 raf.readLine();
@@ -104,10 +104,10 @@ public class LoginController implements Initializable {
     }
 
     
-    protected void checkCred(String uname, String pass, ActionEvent event) {
+    private void checkCred(String uname, String pass, ActionEvent event) {
           
         try {
-            RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "r");
+            RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "r");
             
             for(int i=1; i<line; i+=3){
                 System.out.println("Count: "+ i);
@@ -146,11 +146,11 @@ public class LoginController implements Initializable {
         }
     }
     
-    protected boolean validateReg(String a) {
+    private boolean validateReg(String a) {
         boolean exist = false;
         
         try {
-            RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "r");
+            RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "r");
             
             for(int i=1; i<line; i+=3){
                 System.out.println("Count: "+ i);
@@ -175,10 +175,10 @@ public class LoginController implements Initializable {
         return exist;
     }
     
-    protected void countLines() {
+    private void countLines() {
         try {
             line = 0;
-            RandomAccessFile raf = new RandomAccessFile(file + "\\login.txt", "rw");
+            RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "rw");
             for(int i=0; raf.readLine() != null; i++) {
                 line++;
             }
