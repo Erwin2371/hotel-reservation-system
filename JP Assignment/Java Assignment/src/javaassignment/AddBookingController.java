@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,16 +12,24 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,14 +72,14 @@ class Customer{
     }
 }
 
-class BookingDetails {
-    int id;
+class BookingDetails extends Customer{
+    int id = 1;
     int nightCount;
     int roomCount;
     double fees;
     double tax;
     double total;
-    LocalDate date;
+    String date;
     
     public void setID(int n){
         id = n;
@@ -90,7 +99,7 @@ class BookingDetails {
     public void setTotal(double n){
         total = n;
     } 
-    public void setDate(LocalDate n){
+    public void setDate(String n){
         date = n;
     }
     public int getID(){
@@ -111,7 +120,7 @@ class BookingDetails {
     public double getTotal(){
         return total;
     }
-    public LocalDate getDate(){
+    public String getDate(){
         return date;
     }
 }
@@ -196,22 +205,30 @@ public class AddBookingController implements Initializable {
     private Label lblContact;
     @FXML
     private Label lblIC;
-     
+    @FXML
+    private JFXButton btnClear;
+    
     int count = 0;
     int line;
     int idCount = 1;
-    String x;
-    List<String> roomList = new ArrayList<String>();
-    List<String> newRoomList = new ArrayList<String>(Arrays.asList(getString().split(", ")));
-    
+    List<String> RoomList = new ArrayList<String>(); // roomList and DateList used for creating records
+    List<String> newRoomList; //newRoomList and newDateList used for reading records
+    List<LocalDate> DateList;
+    List<String> newDateList;
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    SpinnerValueFactory<Integer> nightsValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31, 1); //set the spinner init, min and max value
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         main.showTime(dateTime);
         checkfile();
         spinnerListener();
         validateTxt();
+        validateDays();
         countRoom();  
         updatePayment();
+        countLines();
+        readFile();
     }    
 
     @FXML
@@ -240,7 +257,13 @@ public class AddBookingController implements Initializable {
         main.Logout(event);
     }
     
+    @FXML
+    private void Clear(ActionEvent event) {
+        clear();
+    }
+    
     private void checkfile() {
+        //check file exists or not
         try {
             FileReader filer = new FileReader(file + "\\Bookings.txt");
             System.err.println("File Exists!");
@@ -258,47 +281,42 @@ public class AddBookingController implements Initializable {
     private void Book(ActionEvent event) {
         String rname = txtRname.getText();
         String contact = txtContact.getText();
-        String ic = txtIC.getText();
-        LocalDate date = txtDate.getValue();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        String ic = txtIC.getText();      
         
-        
-//        if(rname.isEmpty() || contact.isEmpty() || ic.isEmpty() || date == null){
-//            alert.setTitle("Empty Fields");
-//            alert.setHeaderText("One or more fields are empty.\nPlease fill in all the fields to proceed");
-//            alert.showAndWait();
-//        }
-//        else if(contact.length() < 11){
-//            alert.setTitle("Invalid Contact Number");
-//            alert.setHeaderText("Please use a valid phone number. e.g '012-3456789'");
-//            alert.showAndWait();
-//        }
-//        else if(ic.length() < 14){
-//            alert.setTitle("Invalid IC");
-//            alert.setHeaderText("Please use a valid identification number e.g '010234-56-7890'");
-//            alert.showAndWait();
-//        }
-//        else if(Bdetails.getRoomsCount() == 0){
-//            alert.setTitle("Room not Selected");
-//            alert.setHeaderText("Please select one or more rooms to book");
-//            alert.showAndWait();
-//        }
-//        else{
-//            createBooking(Bdetails.getID(), rname, contact, ic, formatter.format(date), Bdetails.getNightsCount(), roomList, Bdetails.getRoomsCount(), Bdetails.getTotal());
-//        }     
-            countLines();
+        if(rname.isEmpty() || contact.isEmpty() || ic.isEmpty() || txtDate.getValue() == null){
+            alert.setTitle("Empty Fields");
+            alert.setHeaderText("One or more fields are empty.\nPlease fill in all the fields to proceed");
+            alert.showAndWait();
+        }
+        else if(contact.length() < 11){
+            alert.setTitle("Invalid Contact Number");
+            alert.setHeaderText("Please use a valid phone number. e.g '012-3456789'");
+            alert.showAndWait();
+        }
+        else if(ic.length() < 14){
+            alert.setTitle("Invalid IC");
+            alert.setHeaderText("Please use a valid identification number e.g '010234-56-7890'");
+            alert.showAndWait();
+        }
+        else if(Bdetails.getRoomsCount() == 0){
+            alert.setTitle("Room not Selected");
+            alert.setHeaderText("Please select one or more rooms to book");
+            alert.showAndWait();
+        }
+        else{
             customer.setName(rname);
             customer.setContact(contact);
             customer.setIC(ic);
+            String date = DateList.toString();
             Bdetails.setDate(date);
-            readFile();
+            createBooking(Bdetails.getID(), rname, contact, ic, date, Bdetails.getNightsCount(), RoomList, Bdetails.getRoomsCount(), Bdetails.getFees(), Bdetails.getTax(), Bdetails.getTotal());
+        }           
     }
     
-    private void createBooking(int id, String name, String contact, String ic, String date, int nights, List rooms, int rcount, double total){
+    private void createBooking(int id, String name, String contact, String ic, String date, int nights, List rooms, int rcount, double fee, double tax, double total){
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "rw");
-            
+            countLines();
             for(int i=0; i<line; i++){
                 raf.readLine();
             }
@@ -310,9 +328,15 @@ public class AddBookingController implements Initializable {
             raf.writeBytes("Nights: " + nights + "\n");
             raf.writeBytes("Room No: " + rooms + "\n");
             raf.writeBytes("Room Count: " + rcount + "\n");
+            raf.writeBytes("Fee: " + fee + "\n");
+            raf.writeBytes("Tax: " + tax + "\n");
             raf.writeBytes("Total Fees: " + total + "\n");
             raf.writeBytes("\n");
-        
+            
+            alert.setTitle("Booking");
+            alert.setHeaderText("Booking created successfully");
+            alert.showAndWait();
+            clear();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(AddBookingController.class.getName()).log(Level.SEVERE, null, ex);
             
@@ -322,10 +346,11 @@ public class AddBookingController implements Initializable {
     }
     
     private void readFile(){
+        idCount = 1;
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "r");
-            Bdetails.setID(idCount);
-            for(int i=1; i<line; i+=10){
+            countLines();
+            for(int i=1; i<line; i+=12){
                 String id = raf.readLine().substring(12);
                 String name = raf.readLine().substring(15);
                 String contact = raf.readLine().substring(9);
@@ -334,19 +359,53 @@ public class AddBookingController implements Initializable {
                 String nights = raf.readLine().substring(8);
                 String rooms = raf.readLine().substring(9);
                 String roomCount = raf.readLine().substring(12);
+                String fees = raf.readLine().substring(5);
+                String tax = raf.readLine().substring(5);
                 String total = raf.readLine().substring(12);
                 
-                setString(rooms);
-                System.out.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" + nights + "\n" + rooms + "\n" + roomCount + "\n" + total);
-               
-                if(!id.isEmpty()){
+//                System.out.println(id + "\n" + name + "\n" + date + "\n" + nights + "\n" + rooms + "\n" + roomCount);
+                
+                if(id.matches(".*BID.*")){
                     idCount++;
-                    Bdetails.setID(idCount);
-                    System.out.println(Bdetails.getID());
+                    if(idCount >= Bdetails.getID()){
+                        Bdetails.setID(idCount);
+                    }
+                    System.out.println("ID " + Bdetails.getID());
                 }
-                if(!rooms.isEmpty()){
-                    validateToggleBtn("Room 1A", tb_1A);
-                }
+                if(!rooms.isEmpty() && !date.isEmpty() && txtDate.getValue() != null){
+                    String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
+                    String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
+                    newRoomList = new ArrayList<String>(Arrays.asList(a.split(", ")));
+                    newDateList = new ArrayList<String>(Arrays.asList(b.split(", ")));
+                    System.out.println("date: " + newDateList + "\n" + "room: "+ newRoomList + "\n");                   
+                    validateToggleBtn("Room 1A", tb_1A);                   
+                    validateToggleBtn("Room 2A", tb_2A);                   
+                    validateToggleBtn("Room 3A", tb_3A);                   
+                    validateToggleBtn("Room 4A", tb_4A);
+                    validateToggleBtn("Room 5A", tb_5A);
+                    validateToggleBtn("Room 6A", tb_6A);
+                    validateToggleBtn("Room 7A", tb_7A);                   
+                    validateToggleBtn("Room 8A", tb_8A);                   
+                    validateToggleBtn("Room 9A", tb_9A);                   
+                    validateToggleBtn("Room 10A", tb_10A);
+                    validateToggleBtn("Room 1B", tb_1B);
+                    validateToggleBtn("Room 2B", tb_2B);                   
+                    validateToggleBtn("Room 3B", tb_3B);                   
+                    validateToggleBtn("Room 4B", tb_4B);                   
+                    validateToggleBtn("Room 5B", tb_5B);                   
+                    validateToggleBtn("Room 6B", tb_6B);                   
+                    validateToggleBtn("Room 7B", tb_7B);                   
+                    validateToggleBtn("Room 8B", tb_8B);                   
+                    validateToggleBtn("Room 9B", tb_9B);                   
+                    validateToggleBtn("Room 10B", tb_10B);
+                    
+                    //break to read the last record that matches the date selected
+                    if(newDateList.contains(formatter.format(txtDate.getValue()))){        
+                    //BUGGGGGGGGGGGGGGGGGGGGGGGGGGG
+                    break;
+                    }
+                } 
+                raf.readLine();
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
@@ -355,52 +414,51 @@ public class AddBookingController implements Initializable {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);       
         }
     }
-    
-    private void setString(String a){
-        x = a.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(",\\s", ",");
-        
-    }
-    
-    private String getString(){
-        return x;
-    }
-    
-    
-    private void countLines() {
-        try {
-            line = 0;
-            RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "rw");
-            for(int i=0; raf.readLine() != null; i++) {
-                line++;
+         
+    private void validateToggleBtn(String a, JFXToggleButton b){
+        Iterator itr = newRoomList.iterator();
+        Iterator itr2 = newDateList.iterator();
+        while (itr.hasNext() && itr2.hasNext())
+        {  
+            String x = (String)itr.next();
+            String y = (String)itr2.next();
+            //if room and date is found set tg btn
+            if(newRoomList.contains(a) || newDateList.contains(formatter.format(txtDate.getValue()))){
+                    b.setDisable(false);
+                    b.setSelected(false);
+                    b.setToggleColor(Paint.valueOf("#009688"));
+                    b.setToggleLineColor(Paint.valueOf("#77c2bb"));
+            }               
+            if(newRoomList.contains(a) && newDateList.contains(formatter.format(txtDate.getValue()))){
+                b.setDisable(true);
+                b.setSelected(true);
+                b.setToggleColor(Paint.valueOf("#bf0101"));
+                b.setToggleLineColor(Paint.valueOf("#ff4545"));
             }
-            System.out.println("Number of lines: " + line);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            //if both not found reset the tg btn
         }
     }
     
-    private void updatePayment(){
-        Bdetails.setRooms(count);
-        Bdetails.setNights(NumNightsSpinner.getValue());
-        Bdetails.setFees(Bdetails.getNightsCount() * 350.0 * Bdetails.getRoomsCount());
-        Bdetails.setTax(Bdetails.getFees() * 0.1);
-        Bdetails.setTotal(Bdetails.getFees() + Bdetails.getTax());
+    private void validateDays(){      
+        txtDate.valueProperty().addListener((observable, oldValue, newValue) -> {
+            LocalDate startDate = newValue;
+            String x = formatter.format(startDate);
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        lblFees.setText(String.valueOf(Bdetails.getFees()));
-        lblTax.setText(String.valueOf(Bdetails.getTax()));
-        lblTotalfees.setText(String.valueOf(Bdetails.getTotal()));
-    }
-    
-    private void spinnerListener(){
-        SpinnerValueFactory<Integer> nightsValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31, 1);
-        NumNightsSpinner.setValueFactory(nightsValueFactory);
-             
-        NumNightsSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updatePayment();
-        });    
+            try{
+               calendar.setTime(sdf.parse(x));
+            }catch(ParseException ex){
+               Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            calendar.add(Calendar.DAY_OF_MONTH, Bdetails.getNightsCount()-1);
+            String end = sdf.format(calendar.getTime());
+            LocalDate endDate = LocalDate.parse(end);
+            long numOfDaysBetween = ChronoUnit.DAYS.between(newValue, endDate)+1;
+            DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
+            System.out.println("DateList: "+DateList);
+            readFile();
+        });
     }
     
     private void validateTxt(){
@@ -450,22 +508,8 @@ public class AddBookingController implements Initializable {
         });
     }
     
-    private void validateToggleBtn(String b, JFXToggleButton c){
-      
-        Iterator itr = newRoomList.iterator();
-        while (itr.hasNext()) 
-        { 
-            String x = (String)itr.next(); 
-            if (x.equals(b)){
-                System.out.println("gay");
-                c.setDisable(true);
-                c.setToggleColor(Paint.valueOf("#bf0101"));
-                c.setToggleLineColor(Paint.valueOf("#ff4545"));
-            }                
-        }
-    }
-    
     private void validateEffects(JFXTextField a, Label b, boolean c, String d){
+        //add styling to txt field
         if(c == false){
             a.setFocusColor(Paint.valueOf("#ff1500"));
             a.setUnFocusColor(Paint.valueOf("#ff0000"));
@@ -478,16 +522,55 @@ public class AddBookingController implements Initializable {
             b.setVisible(false);
         }
     }
+      
+    private void spinnerListener(){
+        NumNightsSpinner.setValueFactory(nightsValueFactory);
+             
+        NumNightsSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updatePayment();
+            if(txtDate.getValue() != null){
+                LocalDate startDate = txtDate.getValue();
+                String x = formatter.format(startDate);
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                try{
+                   calendar.setTime(sdf.parse(x));
+                }catch(ParseException ex){
+                   Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                calendar.add(Calendar.DAY_OF_MONTH, Bdetails.getNightsCount()-1);
+                String end = sdf.format(calendar.getTime());
+                LocalDate endDate = LocalDate.parse(end);
+                long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
+                DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
+                System.out.println("DateList: " +DateList);
+            }
+        });    
+    }
+    
+    private void updatePayment(){
+        Bdetails.setRooms(count);
+        Bdetails.setNights(NumNightsSpinner.getValue());
+        Bdetails.setFees(Bdetails.getNightsCount() * 350.0 * Bdetails.getRoomsCount());
+        Bdetails.setTax((Bdetails.getFees() * 0.1) + (10 * Bdetails.getNightsCount()));
+        Bdetails.setTotal(Bdetails.getFees() + Bdetails.getTax());
+
+        lblFees.setText(String.valueOf(Bdetails.getFees()));
+        lblTax.setText(String.valueOf(Bdetails.getTax()));
+        lblTotalfees.setText(String.valueOf(Bdetails.getTotal()));
+    }
+
     private void selected(JFXToggleButton a, String b){
-         if(a.isSelected()){
-                roomList.add(b);
+         if(a.isSelected() && a.isDisable() == false){
+                RoomList.add(b);
                 count++;
                 updatePayment();
-                System.out.println(roomList);
+                System.out.println(RoomList);
                 System.out.println(count);
             }
             else if(!a.isSelected()){
-                Iterator itr = roomList.iterator();
+                Iterator itr = RoomList.iterator();
                 while (itr.hasNext()) 
                 { 
                     String x = (String)itr.next(); 
@@ -497,10 +580,26 @@ public class AddBookingController implements Initializable {
                         updatePayment();
                     }                
                 }              
-                System.out.println(roomList);
+                System.out.println(RoomList);
                 System.out.println(count);
             }
      }
+    
+    private void countLines() {
+        try {
+            line = 0;
+            RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "rw");
+            for(int i=0; raf.readLine() != null; i++) {
+                line++;
+            }
+            System.out.println("Number of lines: " + line);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
      private void countRoom() {  
         tb_1A.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -583,4 +682,32 @@ public class AddBookingController implements Initializable {
             selected(tb_10B, "Room 10B");
         });
     }
+     
+     private void clear(){
+        txtContact.clear();
+        txtIC.clear();
+        txtRname.clear();
+        NumNightsSpinner.getValueFactory().setValue(1);
+        tb_1A.setSelected(false);
+        tb_2A.setSelected(false);
+        tb_3A.setSelected(false);
+        tb_4A.setSelected(false);
+        tb_5A.setSelected(false);
+        tb_6A.setSelected(false);
+        tb_7A.setSelected(false);
+        tb_8A.setSelected(false);
+        tb_9A.setSelected(false);
+        tb_10A.setSelected(false);
+        tb_1B.setSelected(false);
+        tb_2B.setSelected(false);
+        tb_3B.setSelected(false);
+        tb_4B.setSelected(false);
+        tb_5B.setSelected(false);
+        tb_6B.setSelected(false);
+        tb_7B.setSelected(false);
+        tb_8B.setSelected(false);
+        tb_9B.setSelected(false);
+        tb_10B.setSelected(false);
+        readFile();
+     }
 }

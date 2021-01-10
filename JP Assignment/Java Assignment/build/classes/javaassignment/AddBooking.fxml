@@ -188,7 +188,7 @@
                   <JFXToggleButton fx:id="tb_4B" text="4B" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <JFXButton fx:id="btnBook" layoutX="688.0" layoutY="586.0" onAction="#Book" prefHeight="59.0" prefWidth="126.0" style="-fx-background-color: #00E016; -fx-background-radius: 10;" text="BOOK" textFill="WHITE">
+            <JFXButton fx:id="btnBook" layoutX="648.0" layoutY="563.0" onAction="#Book" prefHeight="62.0" prefWidth="209.0" style="-fx-background-color: #00E016; -fx-background-radius: 10;" text="BOOK" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="19.0" />
                </font>
@@ -223,6 +223,11 @@
                   <Font size="19.0" />
                </font>
             </Label>
+            <JFXButton fx:id="btnClear" layoutX="648.0" layoutY="637.0" onAction="#Clear" prefHeight="62.0" prefWidth="209.0" style="-fx-background-color: FFBC1F; -fx-background-radius: 10;" text="CLEAR" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="19.0" />
+               </font>
+            </JFXButton>
          </children>
       </AnchorPane>
    </right>

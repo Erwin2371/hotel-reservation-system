@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\user\\Downloads\\jfoenix-8.0.10.jar",
+        "c:\\Users\\user\\Downloads\\fontawesomefx-8.9.jar"
+    ]
+}

@@ -1,10 +1,48 @@
 Booking ID: BID1
+Reservee Name: erw
+Contact: 011-1111111
+IC: 111111-11-1111
+Date: [2021-01-05, 2021-01-06]
+Nights: 2
+Room No: [Room 1A, Room 2A]
+Room Count: 1
+Fee: 700.0
+Tax: 90.0
+Total Fees: 790.0
+
+Booking ID: BID2
 Reservee Name: er
 Contact: 011-1111111
 IC: 111111-11-1111
-Date: 05-01-2021
+Date: [2021-01-09, 2021-01-10]
+Nights: 2
+Room No: [Room 1B, Room 2B, Room 3B, Room 8A]
+Room Count: 4
+Fee: 2800.0
+Tax: 300.0
+Total Fees: 3100.0
+
+Booking ID: BID3
+Reservee Name: sex
+Contact: 011-1111111
+IC: 111111-11-1111
+Date: [2021-01-09]
 Nights: 1
-Room No: [Room 1A, Room 2A, Room 3A]
-Room Count: 3
-Total Fees: 1155.0
+Room No: [Room 1A]
+Room Count: 1
+Fee: 350.0
+Tax: 45.0
+Total Fees: 395.0
+
+Booking ID: BID4
+Reservee Name: damn
+Contact: 011-1111111
+IC: 111111-11-1111
+Date: [2021-01-09]
+Nights: 1
+Room No: [Room 2A]
+Room Count: 1
+Fee: 350.0
+Tax: 45.0
+Total Fees: 395.0
 
