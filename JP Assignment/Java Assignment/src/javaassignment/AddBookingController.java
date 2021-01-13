@@ -5,11 +5,13 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.text.ParseException;
@@ -223,13 +225,12 @@ public class AddBookingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         main.showTime(dateTime);
-        checkfile();
+        checkFile();
         spinnerListener();
         validateTxt();
         validateDays();
         countRoom();  
         updatePayment();
-        countLines();
     }    
 
     @FXML
@@ -267,7 +268,7 @@ public class AddBookingController implements Initializable {
         clearfields();
     }
     
-    private void checkfile() {
+    private void checkFile() {
         //check file exists or not
         try {
             FileReader filer = new FileReader(file + "\\Bookings.txt");
@@ -319,46 +320,61 @@ public class AddBookingController implements Initializable {
             String date = DateList.toString(); 
             Bdetails.setDate(date); //set date variable
             //create the booking 
-            createBooking(Bdetails.getID(), rname, contact, ic, date, Bdetails.getNightsCount(), RoomList, Bdetails.getRoomsCount(), Bdetails.getFees(), Bdetails.getTax(), Bdetails.getTotal());
+            if(createBooking(Bdetails.getID(), rname, contact, ic, date, Bdetails.getNightsCount(), RoomList, 
+                    Bdetails.getRoomsCount(), Bdetails.getFees(), Bdetails.getTax(), Bdetails.getTotal())){
+                alert.setTitle("Create Booking");
+                alert.setHeaderText("Booking Success");
+                alert.showAndWait();
+            }
+            else{
+                alert.setTitle("Create Booking");
+                alert.setHeaderText("Booking Failed");
+                alert.showAndWait();
+            }
         }           
     }
     
-    private void createBooking(int id, String name, String contact, String ic, String date, int nights, List rooms, int rcount, double fee, double tax, double total){
-        
+    private boolean createBooking(int id, String name, String contact, String ic, String date, 
+            int nights, List rooms, int rcount, double fee, double tax, double total){
+        boolean created = false;
         try {
-            RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "rw");
-            countLines();
-            for(int i=0; i<line; i++){
-                raf.readLine();
-            }
-            raf.writeBytes("Booking ID: BID" + id + "\n");
-            raf.writeBytes("Reservee Name: " + name + "\n");
-            raf.writeBytes("Contact: " + contact + "\n");
-            raf.writeBytes("IC: " + ic + "\n");
-            raf.writeBytes("Date: " + date + "\n");
-            raf.writeBytes("Nights: " + nights + "\n");
-            raf.writeBytes("Room No: " + rooms + "\n");
-            raf.writeBytes("Room Count: " + rcount + "\n");
-            raf.writeBytes("Fee: " + fee + "\n");
-            raf.writeBytes("Tax: " + tax + "\n");
-            raf.writeBytes("Total Fees: " + total + "\n");
-            raf.writeBytes("\n");
+            FileWriter fw = new FileWriter(file + "\\Bookings.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
             
-            alert.setTitle("Booking");
-            alert.setHeaderText("Booking created successfully");
-            alert.showAndWait();
+            pw.println(
+                "Booking ID: BID" + id + "\n" +
+                "Reservee Name: " + name + "\n" +
+                "Contact: " + contact + "\n" +
+                "IC: " + ic + "\n" +
+                "Date: " + date + "\n" +
+                "Nights: " + nights + "\n" +
+                "Room No: " + rooms + "\n" +
+                "Room Count: " + rcount + "\n" +
+                "Fee: " + fee + "\n" +
+                "Tax: " + tax + "\n" +
+                "Total Fees: " + total + "\n"
+            );          
+            pw.flush();
+            x.close();
+            pw.close();
+            fw.close();
+            bw.close();
+            created = true;
             clearfields();
+            readDate(formatter.format(txtDate.getValue()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(AddBookingController.class.getName()).log(Level.SEVERE, null, ex);
             
         } catch (IOException ex){
             Logger.getLogger(AddBookingController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return created;
     }
     
     private void readDate(String d){
         int idCount = 1;
-        String id = ""; String name = ""; String contact = ""; String ic = ""; String date; String nightCount; String rooms; 
+        String id; String name; String contact; String ic; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         
         try {
@@ -397,8 +413,7 @@ public class AddBookingController implements Initializable {
                     String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
                     newDateList = Arrays.asList(b.split(", "));
                 }
-                setColor();//reset all toggle buttons
-                cleartgbtn();
+                
                 checkContain();
             }
             System.out.println("newRoomList: " + newRoomList);
@@ -425,16 +440,16 @@ public class AddBookingController implements Initializable {
         Iterator itr = searchRoom.iterator();
 //        String y = (String)itr.next();
         if((newRoomList.contains(a))){ //validate the rooms for current date first and set it to green
-               b.setDisable(true);
-               b.setSelected(true);
                b.setToggleColor(Paint.valueOf("#bf0101"));
                b.setToggleLineColor(Paint.valueOf("#ff4545"));
+               b.setDisable(true);
+               b.setSelected(true);
         }
-//        else if(newRoomList.isEmpty()){
-//            b.setToggleColor(Paint.valueOf("#009688"));
-//            b.setToggleLineColor(Paint.valueOf("#77c2bb"));
+//        if(newRoomList.size() == 0){
 //            b.setDisable(false);
 //            b.setSelected(false);
+//            b.setToggleColor(Paint.valueOf("#009688"));
+//            b.setToggleLineColor(Paint.valueOf("#77c2bb"));
 //        }
     }
     
@@ -447,13 +462,16 @@ public class AddBookingController implements Initializable {
             if(txtDate.getValue() != null){
                 getDays();
             }
-        });    
+        });
     }
     
     private void validateDays(){
         //determine all the dates from the start date from datepicker to the end date given by the number spinner
         txtDate.valueProperty().addListener((observable, oldValue, newValue) -> {
             getDays();
+            newRoomList.clear();
+            cleartgbtn(); 
+            readDate(formatter.format(txtDate.getValue()));
         });
     }
     
@@ -473,9 +491,7 @@ public class AddBookingController implements Initializable {
         LocalDate endDate = LocalDate.parse(end);
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
         DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
-        System.out.println("DateList: "+DateList);
-        newRoomList.clear();
-        readDate(d);       
+        System.out.println("DateList: "+DateList);       
     }
     
     private void validateTxt(){
@@ -555,7 +571,18 @@ public class AddBookingController implements Initializable {
         lblTax.setText(String.valueOf(Bdetails.getTax()));
         lblTotalfees.setText(String.valueOf(Bdetails.getTotal()));
     }
-
+    
+    private void clearbtn(JFXToggleButton a){
+        if(a.isSelected() && a.isDisable()){
+            
+        }
+        else{
+            a.setSelected(false);
+            a.setDisable(false);
+            a.setToggleColor(Paint.valueOf("#009688"));
+            a.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        }
+    }
     private void isSelected(JFXToggleButton a, String b){
         //to determine if toggle btn is selected and it is not disabled
          if(a.isSelected() && a.isDisable() == false){
@@ -563,8 +590,8 @@ public class AddBookingController implements Initializable {
                 RoomList.add(b);
                 count++;
                 updatePayment();
-                System.out.println(RoomList);
-                System.out.println(count);
+                System.out.println("RoomList: " + RoomList);
+                System.out.println("RoomCount: " + count);
             }
             else if(!a.isSelected()){
                 //iterator to loop through the array to find if the String 'b' exists in the array
@@ -579,8 +606,8 @@ public class AddBookingController implements Initializable {
                         updatePayment();
                     }                
                 }              
-                System.out.println(RoomList);
-                System.out.println(count);
+                System.out.println("RoomList: " + RoomList);
+                System.out.println("RoomCount: " + count);
             }
      }
     
@@ -591,27 +618,31 @@ public class AddBookingController implements Initializable {
         txtRname.clear();
         NumNightsSpinner.getValueFactory().setValue(1);
         
-        tb_1A.setSelected(false); tb_2A.setSelected(false); tb_3A.setSelected(false); tb_4A.setSelected(false); tb_5A.setSelected(false);
-        tb_6A.setSelected(false); tb_7A.setSelected(false); tb_8A.setSelected(false); tb_9A.setSelected(false); tb_10A.setSelected(false);
-        
-        tb_1B.setSelected(false); tb_2B.setSelected(false); tb_3B.setSelected(false); tb_4B.setSelected(false); tb_5B.setSelected(false);
-        tb_6B.setSelected(false); tb_7B.setSelected(false); tb_8B.setSelected(false); tb_9B.setSelected(false); tb_10B.setSelected(false);
+        clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4A); clearbtn(tb_5A);
+        clearbtn(tb_6B); clearbtn(tb_7B); clearbtn(tb_8B); clearbtn(tb_9A); clearbtn(tb_10A);
+
+        clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4B); clearbtn(tb_5B);
+        clearbtn(tb_6B); clearbtn(tb_7B); clearbtn(tb_8B); clearbtn(tb_9B); clearbtn(tb_10B);
+ 
      }
      
-     private void cleartgbtn(){
-        //set all toggle button to false
+     private void cleartgbtn(){        
+        //set disable to false
         tb_1A.setSelected(false); tb_2A.setSelected(false); tb_3A.setSelected(false); tb_4A.setSelected(false); tb_5A.setSelected(false);
         tb_6A.setSelected(false); tb_7A.setSelected(false); tb_8A.setSelected(false); tb_9A.setSelected(false); tb_10A.setSelected(false);
         
         tb_1B.setSelected(false); tb_2B.setSelected(false); tb_3B.setSelected(false); tb_4B.setSelected(false); tb_5B.setSelected(false);
         tb_6B.setSelected(false); tb_7B.setSelected(false); tb_8B.setSelected(false); tb_9B.setSelected(false); tb_10B.setSelected(false);
         
-        //set disable to false
+        setColor();
+        
+        //set all toggle button to false
         tb_1A.setDisable(false); tb_2A.setDisable(false); tb_3A.setDisable(false); tb_4A.setDisable(false); tb_5A.setDisable(false);
         tb_6A.setDisable(false); tb_7A.setDisable(false); tb_8A.setDisable(false); tb_9A.setDisable(false); tb_10A.setDisable(false);
         
         tb_1B.setDisable(false); tb_2B.setDisable(false); tb_3B.setDisable(false); tb_4B.setDisable(false); tb_5B.setDisable(false);
-        tb_6B.setDisable(false); tb_7B.setDisable(false); tb_8B.setDisable(false); tb_9B.setDisable(false); tb_10B.setDisable(false);       
+        tb_6B.setDisable(false); tb_7B.setDisable(false); tb_8B.setDisable(false); tb_9B.setDisable(false); tb_10B.setDisable(false); 
+        
     }
     
     private void setColor(){
@@ -632,21 +663,6 @@ public class AddBookingController implements Initializable {
         tb_5B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_6B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_7B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_8B.setToggleLineColor(Paint.valueOf("#77c2bb"));
         tb_9B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_10B.setToggleLineColor(Paint.valueOf("#77c2bb"));
     } 
-    private void countLines() {
-        try {
-            line = 0;
-            RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "rw");
-            for(int i=0; raf.readLine() != null; i++) {
-                line++;
-            }
-            System.out.println("Number of lines: " + line);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
      protected void countRoom() {
          //add listener for each toggle button to determine the total roomCount using the selected() function

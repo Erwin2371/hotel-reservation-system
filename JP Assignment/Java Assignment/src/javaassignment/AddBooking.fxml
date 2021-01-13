@@ -125,7 +125,7 @@
                   <AnchorPane prefHeight="82.0" prefWidth="382.0">
                      <children>
                         <Label layoutX="90.0" layoutY="31.0" text="Nights :" />
-                        <Spinner fx:id="NumNightsSpinner" editable="true" layoutX="165.0" layoutY="26.0">
+                        <Spinner fx:id="NumNightsSpinner" layoutX="165.0" layoutY="26.0">
                            <tooltip>
                               <Tooltip text="min: 1, max: 31" />
                            </tooltip></Spinner>

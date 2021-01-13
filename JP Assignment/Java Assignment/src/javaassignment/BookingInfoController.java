@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXToggleButton;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -160,6 +161,7 @@ public class BookingInfoController implements Initializable {
     private static Scanner x;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        checkFile();
         setDisable();
         main.showTime(dateTime);
         validateTxt();
@@ -168,6 +170,16 @@ public class BookingInfoController implements Initializable {
         spinnerListener();
         lblFees.setText(null); lblTax.setText(null); lblTotalfees.setText(null);
     }   
+    
+    private void checkFile(){
+        try {
+            FileReader filer = new FileReader(file + "\\Bookings.txt");
+            System.out.println("File Exist");
+        } catch (FileNotFoundException ex) {
+            System.out.println("File Do Not Exist");
+        }
+        
+    }
     
     @FXML
     private void Back(MouseEvent event) throws IOException {
@@ -244,14 +256,6 @@ public class BookingInfoController implements Initializable {
     @FXML
     private void Clear(ActionEvent event) {
         clearfields();
-    }
-    
-    @FXML
-    private void f(ActionEvent event){
-        File f = new File(file + "\\Bookings.txt");
-        if(!f.delete()){
-            System.err.println("fuck");
-        }
     }
     
     private boolean saveRecord(String BID){
@@ -361,6 +365,9 @@ public class BookingInfoController implements Initializable {
             if(!oldFile.delete()){
                 System.err.println("fuck");
             }
+            else{
+                System.out.println("yes nigga");
+            }
             File dump = new File(file + "\\Bookings.txt");
             newFile.renameTo(dump);
         } catch (Exception ex) {
@@ -378,7 +385,11 @@ public class BookingInfoController implements Initializable {
         try {
             x = new Scanner(new FileReader(file + "\\Bookings.txt"));
             x.useDelimiter("\n");
-            
+            if(!x.hasNext()){                              
+                alert.setTitle("No Records");
+                alert.setHeaderText("There are no records contained");
+                alert.showAndWait();            
+            }
             while(x.hasNext() && !found){
                 //loop through the record until no more records to loop or the record has been found
                 id = x.next().substring(12);
@@ -426,7 +437,6 @@ public class BookingInfoController implements Initializable {
                 }
                 else if(!found && !x.hasNext()){
                     //logic to do if the record if not found/exist
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Recrod Not Found");
                     alert.setHeaderText("The record you're searching for does not exist.");
                     alert.showAndWait();
@@ -700,7 +710,7 @@ public class BookingInfoController implements Initializable {
         txtRname.clear();
         txtContact.clear();
         txtIC.clear();
-        txtDate.setValue(null);
+        txtDate.getEditor().clear();
         NumNightsSpinner.getValueFactory().setValue(1);
 
         cleartgbtn();
