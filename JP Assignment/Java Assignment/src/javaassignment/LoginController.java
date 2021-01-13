@@ -61,6 +61,7 @@ public class LoginController implements Initializable {
     File file = new File(".Data");
 
     private void createFolder(){
+        //create folder if the folder exists
         if(!file.exists()){
             file.mkdir();
             System.out.println("Directory created");
@@ -71,6 +72,7 @@ public class LoginController implements Initializable {
     }
     
     private void readfile() {
+        //check if the file exists in the folder
         try {
             FileReader filer = new FileReader(file + "\\Login.txt");
             System.err.println("File exists!");
@@ -85,6 +87,7 @@ public class LoginController implements Initializable {
     }
     
     private void addCred(String uname, String pass) {
+        //function to register staff
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "rw");
             
@@ -105,7 +108,7 @@ public class LoginController implements Initializable {
 
     
     private void checkCred(String uname, String pass, ActionEvent event) {
-          
+          //check if the username and password matches with the input txt field
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "r");
             
@@ -123,6 +126,7 @@ public class LoginController implements Initializable {
                     Optional<ButtonType> result = alert.showAndWait();
                     
                     if(result.get() == ButtonType.OK && result.isPresent()){
+                        //if ok button is clicked go to home page
                         main.Login(event);
                     }
                     break;
@@ -148,7 +152,7 @@ public class LoginController implements Initializable {
     
     private boolean validateReg(String a) {
         boolean exist = false;
-        
+        //validate if the username already exists in the txt file
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\Login.txt", "r");
             
@@ -213,6 +217,7 @@ public class LoginController implements Initializable {
 
     @FXML
     private void ShowPass(MouseEvent event) {
+        //show or hide password if checkbox is selected
         String a = txtPass.getText();
         String b = txtPass2.getText();
                 

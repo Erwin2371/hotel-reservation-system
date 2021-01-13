@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -55,12 +56,17 @@
    <center>
       <AnchorPane prefHeight="470.0" prefWidth="466.0" style="-fx-background-color: #25A7F8;" BorderPane.alignment="CENTER">
          <children>
-            <Text fill="WHITE" layoutX="33.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hotel Reservation System">
+            <Text fill="WHITE" layoutX="33.0" layoutY="379.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hotel Reservation System">
                <font>
                   <Font name="System Bold" size="30.0" />
                </font>
             </Text>
             <ImageView fitHeight="162.0" fitWidth="238.0" layoutX="96.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fitHeight="203.0" fitWidth="269.0" layoutX="114.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@hotel.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </center>

@@ -4,8 +4,8 @@ Contact: 011-1111111
 IC: 111111-11-1111
 Date: [2021-01-05, 2021-01-06]
 Nights: 2
-Room No: [Room 1B, Room 2B, Room 10B]
-Room Count: 3
+Room No: [Room 1A, Room 2A]
+Room Count: 1
 Fee: 700.0
 Tax: 90.0
 Total Fees: 790.0

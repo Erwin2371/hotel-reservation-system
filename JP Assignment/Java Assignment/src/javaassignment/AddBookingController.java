@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -210,11 +211,12 @@ public class AddBookingController implements Initializable {
     
     int count = 0;
     int line;
-    int idCount = 1;
+    private static Scanner x;
     List<String> RoomList = new ArrayList<String>(); // roomList and DateList used for creating records
-    List<String> newRoomList; //newRoomList and newDateList used for reading records
+    List<String> newRoomList = new ArrayList<String>(); //newRoomList and newDateList used for reading records
     List<LocalDate> DateList;
-    List<String> newDateList;
+    List<String> newDateList = new ArrayList<String>();
+    List<String>searchRoom = new ArrayList<String>(); //searchRoom is used for validate rooms
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     SpinnerValueFactory<Integer> nightsValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31, 1); //set the spinner init, min and max value
@@ -228,7 +230,6 @@ public class AddBookingController implements Initializable {
         countRoom();  
         updatePayment();
         countLines();
-        readFile();
     }    
 
     @FXML
@@ -244,22 +245,26 @@ public class AddBookingController implements Initializable {
 
     @FXML
     private void Home(ActionEvent event) throws IOException{
+        //go to home page
         main.Login(event);
     }
 
     @FXML
     private void Booking(ActionEvent event) throws IOException {
+        //go to booking info page
         main.Booking(event);
     }
 
     @FXML
     private void Logout(ActionEvent event) throws IOException{
+        //go to login page
         main.Logout(event);
     }
     
     @FXML
     private void Clear(ActionEvent event) {
-        clear();
+        //clear all fields including resetting toggle button
+        clearfields();
     }
     
     private void checkfile() {
@@ -283,37 +288,43 @@ public class AddBookingController implements Initializable {
         String contact = txtContact.getText();
         String ic = txtIC.getText();      
         
+        //validate is there is empty fields
         if(rname.isEmpty() || contact.isEmpty() || ic.isEmpty() || txtDate.getValue() == null){
             alert.setTitle("Empty Fields");
             alert.setHeaderText("One or more fields are empty.\nPlease fill in all the fields to proceed");
             alert.showAndWait();
         }
+        //validate if the txtcontact is invalid
         else if(contact.length() < 11){
             alert.setTitle("Invalid Contact Number");
             alert.setHeaderText("Please use a valid phone number. e.g '012-3456789'");
             alert.showAndWait();
         }
+        //validate if the txtic is invalid
         else if(ic.length() < 14){
             alert.setTitle("Invalid IC");
             alert.setHeaderText("Please use a valid identification number e.g '010234-56-7890'");
             alert.showAndWait();
         }
+        //validate if no toggle btns are selected
         else if(Bdetails.getRoomsCount() == 0){
             alert.setTitle("Room not Selected");
             alert.setHeaderText("Please select one or more rooms to book");
             alert.showAndWait();
         }
         else{
-            customer.setName(rname);
-            customer.setContact(contact);
-            customer.setIC(ic);
-            String date = DateList.toString();
-            Bdetails.setDate(date);
+            customer.setName(rname); //set name variable
+            customer.setContact(contact); //set contact variable 
+            customer.setIC(ic); //set ic variable
+            String date = DateList.toString(); 
+            Bdetails.setDate(date); //set date variable
+            //create the booking 
             createBooking(Bdetails.getID(), rname, contact, ic, date, Bdetails.getNightsCount(), RoomList, Bdetails.getRoomsCount(), Bdetails.getFees(), Bdetails.getTax(), Bdetails.getTotal());
         }           
     }
     
     private void createBooking(int id, String name, String contact, String ic, String date, int nights, List rooms, int rcount, double fee, double tax, double total){
+        
         try {
             RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "rw");
             countLines();
@@ -336,7 +347,7 @@ public class AddBookingController implements Initializable {
             alert.setTitle("Booking");
             alert.setHeaderText("Booking created successfully");
             alert.showAndWait();
-            clear();
+            clearfields();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(AddBookingController.class.getName()).log(Level.SEVERE, null, ex);
             
@@ -345,123 +356,130 @@ public class AddBookingController implements Initializable {
         }
     }
     
-    private void readFile(){
-        idCount = 1;
+    private void readDate(String d){
+        int idCount = 1;
+        String id = ""; String name = ""; String contact = ""; String ic = ""; String date; String nightCount; String rooms; 
+        String roomCount; String fee; String tax; String total;
+        
         try {
-            RandomAccessFile raf = new RandomAccessFile(file + "\\Bookings.txt", "r");
-            countLines();
-            for(int i=1; i<line; i+=12){
-                String id = raf.readLine().substring(12);
-                String name = raf.readLine().substring(15);
-                String contact = raf.readLine().substring(9);
-                String ic = raf.readLine().substring(4);
-                String date = raf.readLine().substring(6);
-                String nights = raf.readLine().substring(8);
-                String rooms = raf.readLine().substring(9);
-                String roomCount = raf.readLine().substring(12);
-                String fees = raf.readLine().substring(5);
-                String tax = raf.readLine().substring(5);
-                String total = raf.readLine().substring(12);
-                
-//                System.out.println(id + "\n" + name + "\n" + date + "\n" + nights + "\n" + rooms + "\n" + roomCount);
-                
+            x = new Scanner(new File(file + "\\Bookings.txt"));
+            x.useDelimiter("\n");
+            
+            while(x.hasNext()){
+                id = x.next().substring(12);
+                name = x.next().substring(15);
+                contact = x.next().substring(9);
+                ic = x.next().substring(4);
+                date = x.next().substring(6);
+                nightCount = x.next().substring(8);
+                rooms = x.next().substring(9);
+                roomCount = x.next().substring(12);
+                fee = x.next().substring(5);
+                tax = x.next().substring(5);
+                total = x.next().substring(12);
+                x.next();
+
+                String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
+                String[] r = a.split(", ");
                 if(id.matches(".*BID.*")){
                     idCount++;
                     if(idCount >= Bdetails.getID()){
                         Bdetails.setID(idCount);
                     }
-                    System.out.println("ID " + Bdetails.getID());
+                    System.out.println("ID: " + Bdetails.getID());
                 }
-                if(!rooms.isEmpty() && !date.isEmpty() && txtDate.getValue() != null){
-                    String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
-                    String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
-                    newRoomList = new ArrayList<String>(Arrays.asList(a.split(", ")));
-                    newDateList = new ArrayList<String>(Arrays.asList(b.split(", ")));
-                    System.out.println("date: " + newDateList + "\n" + "room: "+ newRoomList + "\n");                   
-                    validateToggleBtn("Room 1A", tb_1A);                   
-                    validateToggleBtn("Room 2A", tb_2A);                   
-                    validateToggleBtn("Room 3A", tb_3A);                   
-                    validateToggleBtn("Room 4A", tb_4A);
-                    validateToggleBtn("Room 5A", tb_5A);
-                    validateToggleBtn("Room 6A", tb_6A);
-                    validateToggleBtn("Room 7A", tb_7A);                   
-                    validateToggleBtn("Room 8A", tb_8A);                   
-                    validateToggleBtn("Room 9A", tb_9A);                   
-                    validateToggleBtn("Room 10A", tb_10A);
-                    validateToggleBtn("Room 1B", tb_1B);
-                    validateToggleBtn("Room 2B", tb_2B);                   
-                    validateToggleBtn("Room 3B", tb_3B);                   
-                    validateToggleBtn("Room 4B", tb_4B);                   
-                    validateToggleBtn("Room 5B", tb_5B);                   
-                    validateToggleBtn("Room 6B", tb_6B);                   
-                    validateToggleBtn("Room 7B", tb_7B);                   
-                    validateToggleBtn("Room 8B", tb_8B);                   
-                    validateToggleBtn("Room 9B", tb_9B);                   
-                    validateToggleBtn("Room 10B", tb_10B);
-                    
-                    //break to read the last record that matches the date selected
-                    if(newDateList.contains(formatter.format(txtDate.getValue()))){        
-                    //BUGGGGGGGGGGGGGGGGGGGGGGGGGGG
-                    break;
+                if(date.contains(d)){ //adds room whenenver the date contains the same date
+                    for(int i=0; i<r.length; i++){
+                        if(!newRoomList.contains(r[i])){ //Do not add the string if the Room already exist in the array
+                            newRoomList.add(r[i]);
+                        }
                     }
-                } 
-                raf.readLine();
+                    String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
+                    newDateList = Arrays.asList(b.split(", "));
+                }
+                setColor();//reset all toggle buttons
+                cleartgbtn();
+                checkContain();
             }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-
-        } catch (IOException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);       
-        }
-    }
-         
-    private void validateToggleBtn(String a, JFXToggleButton b){
-        Iterator itr = newRoomList.iterator();
-        Iterator itr2 = newDateList.iterator();
-        while (itr.hasNext() && itr2.hasNext())
-        {  
-            String x = (String)itr.next();
-            String y = (String)itr2.next();
-            //if room and date is found set tg btn
-            if(newRoomList.contains(a) || newDateList.contains(formatter.format(txtDate.getValue()))){
-                    b.setDisable(false);
-                    b.setSelected(false);
-                    b.setToggleColor(Paint.valueOf("#009688"));
-                    b.setToggleLineColor(Paint.valueOf("#77c2bb"));
-            }               
-            if(newRoomList.contains(a) && newDateList.contains(formatter.format(txtDate.getValue()))){
-                b.setDisable(true);
-                b.setSelected(true);
-                b.setToggleColor(Paint.valueOf("#bf0101"));
-                b.setToggleLineColor(Paint.valueOf("#ff4545"));
-            }
-            //if both not found reset the tg btn
+            System.out.println("newRoomList: " + newRoomList);
+            System.out.println("newDateList: " + newDateList);
+//            System.out.println("searchRoom: " + searchRoom);
+        } catch (Exception ex) {
+            Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         }
     }
     
-    private void validateDays(){      
-        txtDate.valueProperty().addListener((observable, oldValue, newValue) -> {
-            LocalDate startDate = newValue;
-            String x = formatter.format(startDate);
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private void checkContain(){
+        isContain("Room 1A", tb_1A); isContain("Room 2A", tb_2A); isContain("Room 3A", tb_3A);                   
+        isContain("Room 4A", tb_4A); isContain("Room 5A", tb_5A); isContain("Room 6A", tb_6A);
+        isContain("Room 7A", tb_7A); isContain("Room 8A", tb_8A); isContain("Room 9A", tb_9A);                   
+        isContain("Room 10A", tb_10A);
 
-            try{
-               calendar.setTime(sdf.parse(x));
-            }catch(ParseException ex){
-               Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        isContain("Room 1B", tb_1B); isContain("Room 2B", tb_2B); isContain("Room 3B", tb_3B);                   
+        isContain("Room 4B", tb_4B); isContain("Room 5B", tb_5B); isContain("Room 6B", tb_6B);                   
+        isContain("Room 7B", tb_7B); isContain("Room 8B", tb_8B); isContain("Room 9B", tb_9B);                   
+        isContain("Room 10B", tb_10B);
+    }
+         
+    private void isContain(String a, JFXToggleButton b){
+        Iterator itr = searchRoom.iterator();
+//        String y = (String)itr.next();
+        if((newRoomList.contains(a))){ //validate the rooms for current date first and set it to green
+               b.setDisable(true);
+               b.setSelected(true);
+               b.setToggleColor(Paint.valueOf("#bf0101"));
+               b.setToggleLineColor(Paint.valueOf("#ff4545"));
+        }
+//        else if(newRoomList.isEmpty()){
+//            b.setToggleColor(Paint.valueOf("#009688"));
+//            b.setToggleLineColor(Paint.valueOf("#77c2bb"));
+//            b.setDisable(false);
+//            b.setSelected(false);
+//        }
+    }
+    
+    private void spinnerListener(){
+    //listener for number spinner to change the number value and updates the fees, tax and total fees
+        NumNightsSpinner.setValueFactory(nightsValueFactory);
+
+        NumNightsSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updatePayment();
+            if(txtDate.getValue() != null){
+                getDays();
             }
-            calendar.add(Calendar.DAY_OF_MONTH, Bdetails.getNightsCount()-1);
-            String end = sdf.format(calendar.getTime());
-            LocalDate endDate = LocalDate.parse(end);
-            long numOfDaysBetween = ChronoUnit.DAYS.between(newValue, endDate)+1;
-            DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
-            System.out.println("DateList: "+DateList);
-            readFile();
+        });    
+    }
+    
+    private void validateDays(){
+        //determine all the dates from the start date from datepicker to the end date given by the number spinner
+        txtDate.valueProperty().addListener((observable, oldValue, newValue) -> {
+            getDays();
         });
     }
     
+    private void getDays(){
+        LocalDate startDate = txtDate.getValue();
+        String d = formatter.format(startDate);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        try{
+           calendar.setTime(sdf.parse(d));
+        }catch(ParseException ex){
+           Logger.getLogger(AddBookingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, Bdetails.getNightsCount()-1);
+        String end = sdf.format(calendar.getTime());
+        LocalDate endDate = LocalDate.parse(end);
+        long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
+        DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
+        System.out.println("DateList: "+DateList);
+        newRoomList.clear();
+        readDate(d);       
+    }
+    
     private void validateTxt(){
+        //validate all txt fields
         txtRname.textProperty().addListener((observable, oldValue, newValue) -> {
            if(!newValue.matches("\\sa-zA-Z*")){
                txtRname.setText(newValue.replaceAll("[^\\sa-zA-Z]", ""));;
@@ -477,6 +495,7 @@ public class AddBookingController implements Initializable {
                 txtContact.setText(txtContact.getText().substring(0, 11));
             }
             else if(newValue.length() >= 10 && newValue.matches("^\\d{3}-\\d{7,8}$") == false){
+                //validate contact format
                 txtContact.setText(txtContact.getText().replaceAll("^(\\d{3})(\\d{7,8})$", "$1-$2"));           
             }
             else if(!newValue.matches("^01\\d{1}-\\d{7,8}$")){
@@ -497,6 +516,7 @@ public class AddBookingController implements Initializable {
                 txtIC.setText(txtIC.getText().substring(0, 14));
             }
             else if(newValue.length() == 12 && newValue.matches("^\\d{6}-\\d{2}-\\d{4}$") == false){
+                //validate ic format
                 txtIC.setText(txtIC.getText().replaceAll("^(\\d{6})(\\d{2})(\\d{4})$", "$1-$2-$3"));
                 validateEffects(txtIC, lblIC, true, "");
                 customer.setIC(newValue);
@@ -509,7 +529,7 @@ public class AddBookingController implements Initializable {
     }
     
     private void validateEffects(JFXTextField a, Label b, boolean c, String d){
-        //add styling to txt field
+        //add styling to txt field if the value is in the wrong format in the validatetxt function
         if(c == false){
             a.setFocusColor(Paint.valueOf("#ff1500"));
             a.setUnFocusColor(Paint.valueOf("#ff0000"));
@@ -523,33 +543,8 @@ public class AddBookingController implements Initializable {
         }
     }
       
-    private void spinnerListener(){
-        NumNightsSpinner.setValueFactory(nightsValueFactory);
-             
-        NumNightsSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updatePayment();
-            if(txtDate.getValue() != null){
-                LocalDate startDate = txtDate.getValue();
-                String x = formatter.format(startDate);
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                try{
-                   calendar.setTime(sdf.parse(x));
-                }catch(ParseException ex){
-                   Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                calendar.add(Calendar.DAY_OF_MONTH, Bdetails.getNightsCount()-1);
-                String end = sdf.format(calendar.getTime());
-                LocalDate endDate = LocalDate.parse(end);
-                long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
-                DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
-                System.out.println("DateList: " +DateList);
-            }
-        });    
-    }
-    
     private void updatePayment(){
+        //function to update and set the variables
         Bdetails.setRooms(count);
         Bdetails.setNights(NumNightsSpinner.getValue());
         Bdetails.setFees(Bdetails.getNightsCount() * 350.0 * Bdetails.getRoomsCount());
@@ -561,8 +556,10 @@ public class AddBookingController implements Initializable {
         lblTotalfees.setText(String.valueOf(Bdetails.getTotal()));
     }
 
-    private void selected(JFXToggleButton a, String b){
+    private void isSelected(JFXToggleButton a, String b){
+        //to determine if toggle btn is selected and it is not disabled
          if(a.isSelected() && a.isDisable() == false){
+             //if selected then add the String 'b' into the RoomList array and increment the count - for roomCount
                 RoomList.add(b);
                 count++;
                 updatePayment();
@@ -570,13 +567,15 @@ public class AddBookingController implements Initializable {
                 System.out.println(count);
             }
             else if(!a.isSelected()){
+                //iterator to loop through the array to find if the String 'b' exists in the array
                 Iterator itr = RoomList.iterator();
                 while (itr.hasNext()) 
                 { 
                     String x = (String)itr.next(); 
-                    if (x.equals(b) ){
+                    if (x.equals(b) ){ 
+                        //remove the String 'b' from the RoomList array if the toggle btn is deselected
                         itr.remove(); 
-                        count--;
+                        count--; //decrement the count - used for roomCount
                         updatePayment();
                     }                
                 }              
@@ -585,6 +584,54 @@ public class AddBookingController implements Initializable {
             }
      }
     
+    private void clearfields(){
+         //clear all txtfields and reset all toggle btn
+        txtContact.clear();
+        txtIC.clear();
+        txtRname.clear();
+        NumNightsSpinner.getValueFactory().setValue(1);
+        
+        tb_1A.setSelected(false); tb_2A.setSelected(false); tb_3A.setSelected(false); tb_4A.setSelected(false); tb_5A.setSelected(false);
+        tb_6A.setSelected(false); tb_7A.setSelected(false); tb_8A.setSelected(false); tb_9A.setSelected(false); tb_10A.setSelected(false);
+        
+        tb_1B.setSelected(false); tb_2B.setSelected(false); tb_3B.setSelected(false); tb_4B.setSelected(false); tb_5B.setSelected(false);
+        tb_6B.setSelected(false); tb_7B.setSelected(false); tb_8B.setSelected(false); tb_9B.setSelected(false); tb_10B.setSelected(false);
+     }
+     
+     private void cleartgbtn(){
+        //set all toggle button to false
+        tb_1A.setSelected(false); tb_2A.setSelected(false); tb_3A.setSelected(false); tb_4A.setSelected(false); tb_5A.setSelected(false);
+        tb_6A.setSelected(false); tb_7A.setSelected(false); tb_8A.setSelected(false); tb_9A.setSelected(false); tb_10A.setSelected(false);
+        
+        tb_1B.setSelected(false); tb_2B.setSelected(false); tb_3B.setSelected(false); tb_4B.setSelected(false); tb_5B.setSelected(false);
+        tb_6B.setSelected(false); tb_7B.setSelected(false); tb_8B.setSelected(false); tb_9B.setSelected(false); tb_10B.setSelected(false);
+        
+        //set disable to false
+        tb_1A.setDisable(false); tb_2A.setDisable(false); tb_3A.setDisable(false); tb_4A.setDisable(false); tb_5A.setDisable(false);
+        tb_6A.setDisable(false); tb_7A.setDisable(false); tb_8A.setDisable(false); tb_9A.setDisable(false); tb_10A.setDisable(false);
+        
+        tb_1B.setDisable(false); tb_2B.setDisable(false); tb_3B.setDisable(false); tb_4B.setDisable(false); tb_5B.setDisable(false);
+        tb_6B.setDisable(false); tb_7B.setDisable(false); tb_8B.setDisable(false); tb_9B.setDisable(false); tb_10B.setDisable(false);       
+    }
+    
+    private void setColor(){
+        tb_1A.setToggleColor(Paint.valueOf("#009688")); tb_2A.setToggleColor(Paint.valueOf("#009688")); tb_3A.setToggleColor(Paint.valueOf("#009688")); tb_4A.setToggleColor(Paint.valueOf("#009688"));
+        tb_5A.setToggleColor(Paint.valueOf("#009688")); tb_6A.setToggleColor(Paint.valueOf("#009688")); tb_7A.setToggleColor(Paint.valueOf("#009688")); tb_8A.setToggleColor(Paint.valueOf("#009688"));
+        tb_9A.setToggleColor(Paint.valueOf("#009688")); tb_10A.setToggleColor(Paint.valueOf("#009688"));
+        
+        tb_1B.setToggleColor(Paint.valueOf("#009688")); tb_2B.setToggleColor(Paint.valueOf("#009688")); tb_3B.setToggleColor(Paint.valueOf("#009688")); tb_4B.setToggleColor(Paint.valueOf("#009688"));
+        tb_5B.setToggleColor(Paint.valueOf("#009688")); tb_6B.setToggleColor(Paint.valueOf("#009688")); tb_7B.setToggleColor(Paint.valueOf("#009688")); tb_8B.setToggleColor(Paint.valueOf("#009688"));
+        tb_9B.setToggleColor(Paint.valueOf("#009688")); tb_10B.setToggleColor(Paint.valueOf("#009688"));
+        
+        //setToggleLine
+        tb_1A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_2A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_3A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_4A.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        tb_5A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_6A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_7A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_8A.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        tb_9A.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_10A.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        
+        tb_1B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_2B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_3B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_4B.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        tb_5B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_6B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_7B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_8B.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        tb_9B.setToggleLineColor(Paint.valueOf("#77c2bb")); tb_10B.setToggleLineColor(Paint.valueOf("#77c2bb"));
+    } 
     private void countLines() {
         try {
             line = 0;
@@ -601,113 +648,86 @@ public class AddBookingController implements Initializable {
         }
     }
     
-     private void countRoom() {  
+     protected void countRoom() {
+         //add listener for each toggle button to determine the total roomCount using the selected() function
         tb_1A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_1A, "Room 1A");           
+           isSelected(tb_1A, "Room 1A");           
         });
         
         tb_2A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_2A, "Room 2A");           
+           isSelected(tb_2A, "Room 2A");           
         });
         
         tb_3A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_3A, "Room 3A");           
+           isSelected(tb_3A, "Room 3A");           
         });
         
         tb_4A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_4A, "Room 4A");           
+           isSelected(tb_4A, "Room 4A");           
         });
         
         tb_5A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_5A, "Room 5A");           
+           isSelected(tb_5A, "Room 5A");           
         });
         
         tb_6A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_6A, "Room 6A");           
+           isSelected(tb_6A, "Room 6A");           
         });
         
         tb_7A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_7A, "Room 7A");           
+           isSelected(tb_7A, "Room 7A");           
         });
         
         tb_8A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_8A, "Room 8A");           
+           isSelected(tb_8A, "Room 8A");           
         });
         
         tb_9A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            selected(tb_9A, "Room 9A");
+            isSelected(tb_9A, "Room 9A");
         });
         
         tb_10A.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            selected(tb_10A, "Room 10A");           
+            isSelected(tb_10A, "Room 10A");           
         });
         
         tb_1B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_1B, "Room 1B");        
+           isSelected(tb_1B, "Room 1B");        
         });
         
         tb_2B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_2B, "Room 2B");           
+           isSelected(tb_2B, "Room 2B");           
         });
         
         tb_3B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_3B, "Room 3B");         
+           isSelected(tb_3B, "Room 3B");         
         });
         
         tb_4B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_4B, "Room 4B");           
+           isSelected(tb_4B, "Room 4B");           
         });
         
         tb_5B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_5B, "Room 5B");
+           isSelected(tb_5B, "Room 5B");
         });
         
         tb_6B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_6B, "Room 6B");          
+           isSelected(tb_6B, "Room 6B");          
         });
         
         tb_7B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-           selected(tb_7B, "Room 7B");         
+           isSelected(tb_7B, "Room 7B");         
         });
         
         tb_8B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            selected(tb_8B, "Room 8B");        
+            isSelected(tb_8B, "Room 8B");        
         });
         
         tb_9B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            selected(tb_9B, "Room 9B");
+            isSelected(tb_9B, "Room 9B");
         });
         
         tb_10B.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            selected(tb_10B, "Room 10B");
+            isSelected(tb_10B, "Room 10B");
         });
     }
-     
-     private void clear(){
-        txtContact.clear();
-        txtIC.clear();
-        txtRname.clear();
-        NumNightsSpinner.getValueFactory().setValue(1);
-        tb_1A.setSelected(false);
-        tb_2A.setSelected(false);
-        tb_3A.setSelected(false);
-        tb_4A.setSelected(false);
-        tb_5A.setSelected(false);
-        tb_6A.setSelected(false);
-        tb_7A.setSelected(false);
-        tb_8A.setSelected(false);
-        tb_9A.setSelected(false);
-        tb_10A.setSelected(false);
-        tb_1B.setSelected(false);
-        tb_2B.setSelected(false);
-        tb_3B.setSelected(false);
-        tb_4B.setSelected(false);
-        tb_5B.setSelected(false);
-        tb_6B.setSelected(false);
-        tb_7B.setSelected(false);
-        tb_8B.setSelected(false);
-        tb_9B.setSelected(false);
-        tb_10B.setSelected(false);
-        readFile();
-     }
 }

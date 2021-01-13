@@ -38,6 +38,7 @@ public class FXMain extends Application {
         Scene scene = new Scene(root);
         primaryStage.initStyle(StageStyle.DECORATED);
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -64,8 +65,8 @@ public class FXMain extends Application {
         Scene HomeViewScene = new Scene(HomeView);
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-        
         window.setScene(HomeViewScene);
+        window.setResizable(false);
         window.show();
     }
     
@@ -83,8 +84,8 @@ public class FXMain extends Application {
             Scene LoginViewScene = new Scene(LoginView);
 
             Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-
             window.setScene(LoginViewScene); 
+            window.setResizable(false);
             window.show();
         }
     } 
@@ -96,6 +97,7 @@ public class FXMain extends Application {
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
         window.setScene(BookingViewScene);
+        window.setResizable(false);
         window.show();
     }
 
@@ -106,6 +108,7 @@ public class FXMain extends Application {
         
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
         window.setScene(AddBookingViewScene);
+        window.setResizable(false);
         window.show();
     }
 }
