@@ -25,7 +25,7 @@
                   <Font size="17.0" />
                </font>
             </JFXPasswordField>
-            <JFXCheckBox fx:id="cbShowPass" layoutX="135.0" layoutY="276.0" nodeOrientation="RIGHT_TO_LEFT" onMouseClicked="#ShowPass" text="Show/Hide Password">
+            <JFXCheckBox fx:id="cbShowPass" layoutX="135.0" layoutY="276.0" nodeOrientation="RIGHT_TO_LEFT" onAction="#ShowPass" text="Show/Hide Password">
                <font>
                   <Font size="13.0" />
                </font>
@@ -61,7 +61,6 @@
                   <Font name="System Bold" size="30.0" />
                </font>
             </Text>
-            <ImageView fitHeight="162.0" fitWidth="238.0" layoutX="96.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fitHeight="203.0" fitWidth="269.0" layoutX="114.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@hotel.png" />

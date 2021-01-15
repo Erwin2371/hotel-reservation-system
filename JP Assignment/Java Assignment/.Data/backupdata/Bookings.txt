@@ -11,7 +11,7 @@ Tax: 90.0
 Total Fees: 790.0
 
 Booking ID: BID2
-Reservee Name: er
+Reservee Name: Nicholas
 Contact: 011-1111111
 IC: 111111-11-1111
 Date: [2021-01-09, 2021-01-10]
@@ -23,7 +23,7 @@ Tax: 300.0
 Total Fees: 3100.0
 
 Booking ID: BID3
-Reservee Name: sex
+Reservee Name: test
 Contact: 011-1111111
 IC: 111111-11-1111
 Date: [2021-01-09]
@@ -38,11 +38,23 @@ Booking ID: BID4
 Reservee Name: damn
 Contact: 011-1111111
 IC: 111111-11-1111
-Date: [2021-01-09]
+Date: [2021-01-11]
 Nights: 1
 Room No: [Room 2A]
 Room Count: 1
 Fee: 350.0
 Tax: 45.0
 Total Fees: 395.0
+
+Booking ID: BID5
+Reservee Name: John Doe Johnson
+Contact: 012-3333333
+IC: 010815-14-0293
+Date: [2021-01-05, 2021-01-06, 2021-01-07]
+Nights: 3
+Room No: [Room 10A, Room 5B, Room 4B]
+Room Count: 3
+Fee: 3150.0
+Tax: 345.0
+Total Fees: 3495.0
 

@@ -1,18 +1,32 @@
+ID: ST1
 Username: Admin
-Password: 1234
+Password: 12345678
 
-Username: test
-Password: 1234
+ID: ST2
+Username: User2
+Password: 12345678
 
-Username: Test2
-Password: 1234
+ID: ST3
+Username: test1
+Password: 12345678
 
-Username: lol
-Password: lol
+ID: ST4
+Username: John
+Password: i'mJohn1
 
-Username: gei
-Password: gei
+ID: ST5
+Username: John2
+Password: iamJohn2
 
-Username: 1
-Password: 1
+ID: ST6
+Username: Doe
+Password: 12345678
+
+ID: ST7
+Username: Doe2
+Password: 12345679
+
+ID: ST8
+Username: John Doe
+Password: test1234
 

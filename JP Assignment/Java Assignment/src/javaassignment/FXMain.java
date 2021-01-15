@@ -34,8 +34,9 @@ public class FXMain extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("AddBooking.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("BookingInfo.fxml"));
         Scene scene = new Scene(root);
+        primaryStage.setTitle("Hotel Reservation System");
         primaryStage.initStyle(StageStyle.DECORATED);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
@@ -72,14 +73,12 @@ public class FXMain extends Application {
     
     @FXML
     protected void Logout(ActionEvent event) throws IOException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.WARNING, null , ButtonType.YES, ButtonType.NO);
         alert.setTitle("Exit");
         alert.setHeaderText("Are you sure you want to Logout?");
-       
-        alert.setGraphic(new ImageView(this.getClass().getResource("warning.png").toString()));
         
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.isPresent() && result.get() == ButtonType.OK) {
+        if(result.isPresent() && result.get() == ButtonType.YES) {
             Parent LoginView = FXMLLoader.load(getClass().getResource("Login.fxml"));
             Scene LoginViewScene = new Scene(LoginView);
 

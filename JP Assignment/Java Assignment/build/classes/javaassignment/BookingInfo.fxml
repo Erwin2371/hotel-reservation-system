@@ -128,7 +128,7 @@
                   <AnchorPane prefHeight="82.0" prefWidth="382.0">
                      <children>
                         <Label layoutX="90.0" layoutY="31.0" text="Nights :" />
-                        <Spinner fx:id="NumNightsSpinner" layoutX="165.0" layoutY="26.0">
+                        <Spinner fx:id="NumNightsSpinner" editable="true" layoutX="165.0" layoutY="26.0">
                            <tooltip>
                               <Tooltip text="min: 1, max: 31" />
                            </tooltip>
@@ -137,7 +137,7 @@
                   </AnchorPane>
                </children>
             </VBox>
-            <Label layoutX="100.0" layoutY="361.0" text="Level 1 Rooms">
+            <Label layoutX="100.0" layoutY="375.0" text="Level 1 Rooms">
                <font>
                   <Font name="System Bold Italic" size="19.0" />
                </font>
@@ -167,7 +167,7 @@
                   <JFXToggleButton fx:id="tb_4A" text="4A" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <Label layoutX="391.0" layoutY="361.0" text="Level 2 Rooms">
+            <Label layoutX="391.0" layoutY="375.0" text="Level 2 Rooms">
                <font>
                   <Font name="System Bold Italic" size="19.0" />
                </font>
@@ -197,7 +197,7 @@
                   <JFXToggleButton fx:id="tb_4B" text="4B" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <JFXButton fx:id="btnSave" layoutX="648.0" layoutY="578.0" prefHeight="59.0" prefWidth="95.0" style="-fx-background-color: #00E016; -fx-background-radius: 10;" text="SAVE" textFill="WHITE">
+            <JFXButton fx:id="btnSave" layoutX="648.0" layoutY="578.0" onAction="#Save" prefHeight="59.0" prefWidth="95.0" style="-fx-background-color: #00E016; -fx-background-radius: 10;" text="SAVE" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="19.0" />
                </font>
@@ -256,7 +256,7 @@
                   <Font name="System Bold" size="19.0" />
                </font>
             </JFXButton>
-            <Label layoutX="710.0" layoutY="361.0" text="Receipt">
+            <Label layoutX="702.0" layoutY="375.0" text="Receipt">
                <font>
                   <Font name="System Bold Italic" size="19.0" />
                </font>

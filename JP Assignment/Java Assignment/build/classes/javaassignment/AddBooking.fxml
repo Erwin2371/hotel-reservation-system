@@ -144,7 +144,7 @@
                   <Font name="System Bold Italic" size="19.0" />
                </font>
             </Label>
-            <GridPane layoutX="48.0" layoutY="418.0" prefHeight="289.0" prefWidth="243.0">
+            <GridPane layoutX="48.0" layoutY="410.0" prefHeight="289.0" prefWidth="243.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -174,7 +174,7 @@
                   <Font name="System Bold Italic" size="19.0" />
                </font>
             </Label>
-            <GridPane layoutX="341.0" layoutY="418.0" prefHeight="289.0" prefWidth="243.0">
+            <GridPane layoutX="341.0" layoutY="410.0" prefHeight="289.0" prefWidth="243.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -239,6 +239,11 @@
                   <Font name="System Bold" size="19.0" />
                </font>
             </JFXButton>
+            <Label layoutX="702.0" layoutY="375.0" text="Receipt">
+               <font>
+                  <Font name="System Bold Italic" size="19.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </right>
