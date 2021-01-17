@@ -152,7 +152,7 @@ public class AddBookingController implements Initializable {
     private final File file = new File(".Data");
     private final String curFile = "\\Bookings.txt";
     private int count = 0;
-    private List<String> RoomList = new ArrayList<String>(); // roomList and DateList used for creating records
+    private List<String> RoomList = new ArrayList<String>(); // RoomList and DateList used for creating records
     private List<String> newRoomList = new ArrayList<String>(); //newRoomList and newDateList used for reading records
     private List<LocalDate> DateList;
     private List<String> newDateList;
@@ -502,13 +502,14 @@ public class AddBookingController implements Initializable {
         LocalDate endDate = LocalDate.parse(end);
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
         DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
+        bd.setDate(DateList.toString());
         System.out.println("DateList: "+DateList);       
     }
     
     private void validateTxt(){
         //validate all txt fields
         txtRname.textProperty().addListener((observable, oldValue, newValue) -> {
-           if(!newValue.matches("\\sa-zA-Z*")){
+           if(!newValue.matches("\\^[sa-zA-Z]*$")){
                txtRname.setText(newValue.replaceAll("[^\\sa-zA-Z]", ""));;
            }
            cu.setName(newValue);

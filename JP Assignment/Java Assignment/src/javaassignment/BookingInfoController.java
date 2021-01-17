@@ -61,6 +61,7 @@ public class BookingInfoController implements Initializable {
     private List<String>newRoomList; //newRoomList and newDateList is used to read records and validate rooms and dates
     private List<String>newDateList = new ArrayList<String>(); 
     private List<String>searchRoom = new ArrayList<String>(); //searchRoom is used for validate rooms
+    private List<String>gay = new ArrayList<String>(); 
     private List<String>searchDate;
     private int count;
     private long numOfDaysBetween;
@@ -400,7 +401,8 @@ public class BookingInfoController implements Initializable {
                 }
                 if(!id.substring(12).equals(BID)){
 //                    System.out.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + fee + "\n" + tax + "\n" + total + "\n");
-                    pw.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + fee + "\n" + tax + "\n" + total + "\n");
+                    pw.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" 
+                            + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + fee + "\n" + tax + "\n" + total + "\n");
                 }
             }        
             x.close();
@@ -426,7 +428,7 @@ public class BookingInfoController implements Initializable {
     @FXML
     private void searchRecord(ActionEvent event) {
         boolean found = false;
-        searchRoom.clear();
+        searchRoom.clear(); //reset the toggle buttons to start a new search 
         String id = ""; String name = ""; String contact = ""; String ic = ""; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
@@ -509,21 +511,6 @@ public class BookingInfoController implements Initializable {
                 
                 String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
                 String[] r = a.split(", ");
-                Iterator itr = searchDate.iterator(); 
-//                while(itr.hasNext()){
-//                    System.out.println("date: " + date);
-//                    String dl = (String)itr.next();
-//                    System.out.println(dl);
-                    if(date.contains(d)){ //adds room whenenver the date contains the same date
-                        for(int i=0; i<r.length; i++){
-                            System.out.println(true);
-                            if(!searchRoom.contains(r[i])){ //Do not add the string if the Room already exist in the array
-                                searchRoom.add(r[i]);
-                            }
-                        }
-                    }
-//                }
-                checkContain();
                 if(date.contains(d)){ //adds room whenenver the date contains the same date
                     for(int i=0; i<r.length; i++){
                         if(!searchRoom.contains(r[i])){ //Do not add the string if the Room already exist in the array
@@ -531,6 +518,7 @@ public class BookingInfoController implements Initializable {
                         }
                     }
                 }
+                checkContain();
             }
             System.out.println("newRoomList: " + newRoomList);
             System.out.println("newDateList: " + newDateList);
@@ -573,8 +561,22 @@ public class BookingInfoController implements Initializable {
                 a.setToggleLineColor(Paint.valueOf("#77c2bb"));
                 a.setDisable(false);
                 a.setSelected(false);
-
             }
+//            if(formatter.format(txtDate.getValue()).equals(searchDate.get(0))){
+//                if(searchRoom.contains(b) && newRoomList.contains(b)){ 
+//                    a.setToggleColor(Paint.valueOf("#bf0101"));
+//                    a.setToggleLineColor(Paint.valueOf("#ff4545"));
+//                    a.setDisable(true);
+//                    a.setSelected(true);
+//                }
+//                else if(!searchRoom.contains(b)){ 
+//                    a.setToggleColor(Paint.valueOf("#009688"));
+//                    a.setToggleLineColor(Paint.valueOf("#77c2bb"));
+//                    a.setDisable(false);
+//                    a.setSelected(false);
+//                }
+//               
+//            }
         }
     }
     
@@ -585,7 +587,7 @@ public class BookingInfoController implements Initializable {
                 bd.setRooms(RoomList.toString());
                 count++;
                 updatePayment(); //updates the fees after adding the room
-                System.out.println("Room List: " + RoomList + "\n"+ count);
+//                System.out.println("Room List: " + RoomList + "\n"+ count);
             }
         else if(!a.isSelected()){//decrement the roomCount
             Iterator itr = RoomList.iterator();
@@ -599,7 +601,7 @@ public class BookingInfoController implements Initializable {
                     updatePayment(); //updates the fees after removing the room
                 }
             }          
-            System.out.println("RoomList: " + RoomList + "\n"+ count);
+//            System.out.println("RoomList: " + RoomList + "\n"+ count);
         }
         if(a.isSelected() && !newRoomList.contains(b) && !a.isDisable()){ //to show selected rooms other than the current rooms                     
             a.setToggleColor(Paint.valueOf("#e9610c"));
@@ -775,7 +777,7 @@ public class BookingInfoController implements Initializable {
         txtRname.clear();
         txtContact.clear();
         txtIC.clear();
-        txtDate.getEditor().clear();
+        txtDate.getEditor().setVisible(false);
         NumNightsSpinner.getValueFactory().setValue(1);
 
         cleartgbtn();
@@ -800,6 +802,7 @@ public class BookingInfoController implements Initializable {
         txtRname.setDisable(false);
         txtContact.setDisable(false);
         txtIC.setDisable(false);
+        txtDate.getEditor().setVisible(true);
         txtDate.setDisable(false);
         NumNightsSpinner.setDisable(false);
         
