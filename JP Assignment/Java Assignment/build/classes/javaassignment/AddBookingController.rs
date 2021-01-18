@@ -1,7 +1,0 @@
-javaassignment.AddBookingController
-javaassignment.Booking
-javaassignment.Customer
-javaassignment.Room
-javaassignment.BookingDetails
-javaassignment.CustomerDetails
-javaassignment.Payment
