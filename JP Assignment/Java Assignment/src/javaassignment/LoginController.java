@@ -310,10 +310,7 @@ public class LoginController implements Initializable {
                }
            }               
 
-        } catch (FileNotFoundException e) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);
-
-        } catch (IOException e) {
+        }  catch (IOException e) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);
         }    
         return exist;
