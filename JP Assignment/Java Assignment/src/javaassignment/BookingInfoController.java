@@ -58,12 +58,10 @@ public class BookingInfoController implements Initializable {
     private final String curFile = "\\Bookings.txt";
     private List<String>RoomList = new ArrayList<String>(); //RoomList and DateList is used for saving records 
     private List<LocalDate>DateList;
-    private List<String>newRoomList; //newRoomList and newDateList is used to read records and validate rooms and dates
+    private List<String>newRoomList; //newRoomList and newDateList is used to read records for the searched BID
     private List<String>newDateList = new ArrayList<String>(); 
     private List<String>searchRoom = new ArrayList<String>(); //searchRoom is used for validate rooms
-    private List<String>gay = new ArrayList<String>(); 
     private List<String>searchDate;
-    private int count;
     private long numOfDaysBetween;
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
     private final Alert alert1 = new Alert(Alert.AlertType.CONFIRMATION, null, ButtonType.YES, ButtonType.NO);
@@ -332,7 +330,7 @@ public class BookingInfoController implements Initializable {
                         "Date: " + this.DateList + "\n" + 
                         "Nights: " + newNightCount + "\n" + 
                         "Room No: " + newRoom + "\n" + 
-                        "Room Count: " + count + "\n" + 
+                        "Room Count: " + RoomList.size() + "\n" + 
                         "Fee: " + newFee + "\n" + 
                         "Tax: " + newTax + "\n" + 
                         "Total Fees: " + newTotal + "\n"
@@ -520,17 +518,14 @@ public class BookingInfoController implements Initializable {
                                 searchRoom.add(r.get(i));
                             }
                         }   
-                        for(int c=0; c<q.size(); c++){                         
-                                System.out.println("fuck" + q.get(c));
-                            if(!searchDate.contains(q.get(c))){
-                                for(int i=0; i<r.size(); i++){
-                                    if(searchRoom.contains(r.get(i))){ //remove the room if searchDate does not contain the date 
-                                        searchRoom.remove(r.get(i));
-                                    }
-                                }   
-                            }
-                        }
                     }
+                }
+                if(!searchDate.contains(q.get(0))){
+                    for(int i=0; i<r.size(); i++){
+                        if(searchRoom.contains(r.get(i))){ //remove the room if searchDate does not contain the date 
+                            searchRoom.remove(r.get(i));
+                        }
+                    }   
                 }
             }
             checkContain();
@@ -553,35 +548,34 @@ public class BookingInfoController implements Initializable {
     }
     
     private void isContain(JFXToggleButton a, String b){
-        if(searchRoom.contains(b)){ //then only validate for rooms that are canceled set it to red and disabled
-            a.setToggleColor(Paint.valueOf("#bf0101"));
-            a.setToggleLineColor(Paint.valueOf("#ff4545"));
-            a.setDisable(true);
-            a.setSelected(true);
-
-        }
-        else if(!searchRoom.contains(b)){ //when datepicker is changed it readDate() will be triggered and reset the toggle button to normal
-            a.setToggleColor(Paint.valueOf("#009688"));
-            a.setToggleLineColor(Paint.valueOf("#77c2bb"));
-            a.setDisable(false);
-            a.setSelected(false);
-        }
         if((newRoomList.contains(b))){ //validate the rooms for current date first and set it to green
             a.setToggleColor(Paint.valueOf("#009688"));
             a.setToggleLineColor(Paint.valueOf("#77c2bb"));
             a.setDisable(false);
             a.setSelected(true);
         }
+        if(searchRoom.contains(b)){ //then only validate for rooms that are canceled set it to red and disabled
+            a.setToggleColor(Paint.valueOf("#bf0101"));
+            a.setToggleLineColor(Paint.valueOf("#ff4545"));
+            a.setDisable(true);
+            a.setSelected(true);
+            RoomList.remove(b); //if roomlist array element b is same as searchRoom array element b then remove that element
+            updatePayment();// this is to validate the rooms after disabling the toggle button using number spinner
+            System.out.println("RoomList: " + RoomList + "\n"+ RoomList.size());
+         }
     }
     
     private void isSelected(JFXToggleButton a, String b){
         //to determine if toggle btn is selected and it is not disabled
+        if(a.isSelected() && !newRoomList.contains(b) && !a.isDisable()){ //to show selected rooms other than the current rooms                     
+            a.setToggleColor(Paint.valueOf("#e9610c"));
+            a.setToggleLineColor(Paint.valueOf("#f69051"));           
+        }
         if(a.isSelected() && !a.isDisable()){ //increment the room count
                 RoomList.add(b);
                 bd.setRooms(RoomList.toString());
-                count++;
                 updatePayment(); //updates the fees after adding the room
-//                System.out.println("Room List: " + RoomList + "\n"+ count);
+//                System.out.println("Room List: " + RoomList + "\n"+ RoomList.size());
             }
         else if(!a.isSelected()){//decrement the roomCount
             Iterator itr = RoomList.iterator();
@@ -589,23 +583,18 @@ public class BookingInfoController implements Initializable {
             { 
                 String x = (String)itr.next(); 
                 if (x.equals(b)){ 
-                    count--;
                     itr.remove();
                     bd.setRooms(RoomList.toString());
                     updatePayment(); //updates the fees after removing the room
                 }
             }          
-//            System.out.println("RoomList: " + RoomList + "\n"+ count);
-        }
-        if(a.isSelected() && !newRoomList.contains(b) && !a.isDisable()){ //to show selected rooms other than the current rooms                     
-            a.setToggleColor(Paint.valueOf("#e9610c"));
-            a.setToggleLineColor(Paint.valueOf("#f69051"));           
+//            System.out.println("RoomList: " + RoomList + "\n"+ RoomList.size());
         }
      }
     
     protected void updatePayment(){
         //function to update and set the variables
-        bd.setRoomCount(count);
+        bd.setRoomCount(RoomList.size());
         bd.setNightCount(NumNightsSpinner.getValue());
         bd.calFees();
         bd.calTax();

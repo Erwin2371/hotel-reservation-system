@@ -410,7 +410,9 @@ public class AddBookingController implements Initializable {
                 x.next();
 
                 String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
-                String[] r = a.split(", ");
+                String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
+                List<String> r = Arrays.asList(a.split(", "));
+                List<String> q = Arrays.asList(b.split(", "));
                 if(id.matches(".*BID.*")){
                     idCount++;
                     if(idCount >= bd.getID()){
@@ -422,26 +424,23 @@ public class AddBookingController implements Initializable {
                 while(itr.hasNext()){
                     String z = (String)itr.next();
                     if(date.contains(z)){
-                        for(int i=0; i<r.length; i++){
-                            if(!newRoomList.contains(r[i])){ //Do not add the string if the Room already exist in the array
-                                newRoomList.add(r[i]);
+                        for(int i=0; i<r.size(); i++){
+                            if(!newRoomList.contains(r.get(i))){ //Do not add the string if the Room already exist in the array
+                                newRoomList.add(r.get(i));
                             }
                         } 
                     }
                 }
-//                if(date.contains(d)){ //adds room whenenver the date contains the same date
-//                    for(int i=0; i<r.length; i++){
-//                        if(!newRoomList.contains(r[i])){ //Do not add the string if the Room already exist in the array
-//                            newRoomList.add(r[i]);
-//                        }
-//                    }
-//                    String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
-//                    newDateList  = new ArrayList<String>(Arrays.asList(b.split(", ")));
-//                }        
+               if(!newDateList.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room
+                    for(int i=0; i<r.size(); i++){
+                        if(newRoomList.contains(r.get(i))){ //remove the room if searchDate does not contain the date 
+                            newRoomList.remove(r.get(i));
+                        }
+                    }   
+                }        
                 checkContain();
             }
             System.out.println("newRoomList: " + newRoomList);
-            System.out.println("newDateList: " + newDateList);
         } catch (Exception ex) {
             Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         }
@@ -466,12 +465,12 @@ public class AddBookingController implements Initializable {
                b.setDisable(true);
                b.setSelected(true);
         }
-//        if(newRoomList.size() == 0){
-//            b.setDisable(false);
-//            b.setSelected(false);
-//            b.setToggleColor(Paint.valueOf("#009688"));
-//            b.setToggleLineColor(Paint.valueOf("#77c2bb"));
-//        }
+        if(!newRoomList.contains(a)){ //reset the toggle button if newRoomList array do not contain the element a / clear off selected Rooms triggered by number spinner
+            b.setDisable(false);
+            b.setSelected(false);
+            b.setToggleColor(Paint.valueOf("#009688"));
+            b.setToggleLineColor(Paint.valueOf("#77c2bb"));
+        }
     }
     
     private void spinnerListener(){
@@ -497,7 +496,7 @@ public class AddBookingController implements Initializable {
         });
     }
     
-    private void getDays(){
+    private void getDays(){ //to find the end dates and the dates between the start and end date based on the number spinner value
         LocalDate startDate = txtDate.getValue();
         String d = formatter.format(startDate);
         Calendar calendar = Calendar.getInstance();
@@ -662,9 +661,6 @@ public class AddBookingController implements Initializable {
 
         clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4B); clearbtn(tb_5B);
         clearbtn(tb_6B); clearbtn(tb_7B); clearbtn(tb_8B); clearbtn(tb_9B); clearbtn(tb_10B);
-        newRoomList.clear();
-        cleartgbtn(); 
-        readDate(formatter.format(txtDate.getValue()));
      }
      
      private void cleartgbtn(){        

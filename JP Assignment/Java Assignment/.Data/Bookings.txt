@@ -58,15 +58,3 @@ Fee: 3150.0
 Tax: 345.0
 Total Fees: 3495.0
 
-Booking ID: BID6
-Reservee Name: test
-Contact: 011-1111111
-IC: 111111-11-1111
-Date: [2021-01-12]
-Nights: 1
-Room No: [Room 9B]
-Room Count: 1
-Fee: 350.0
-Tax: 45.0
-Total Fees: 395.0
-
