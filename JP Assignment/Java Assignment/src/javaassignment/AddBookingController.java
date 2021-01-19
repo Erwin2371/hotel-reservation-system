@@ -418,16 +418,26 @@ public class AddBookingController implements Initializable {
                     }
                     System.out.println("ID: " + bd.getID());
                 }
-                if(date.contains(d)){ //adds room whenenver the date contains the same date
-                    for(int i=0; i<r.length; i++){
-                        if(!newRoomList.contains(r[i])){ //Do not add the string if the Room already exist in the array
-                            newRoomList.add(r[i]);
-                        }
+                Iterator itr = newDateList.iterator();
+                while(itr.hasNext()){
+                    String z = (String)itr.next();
+                    if(date.contains(z)){
+                        for(int i=0; i<r.length; i++){
+                            if(!newRoomList.contains(r[i])){ //Do not add the string if the Room already exist in the array
+                                newRoomList.add(r[i]);
+                            }
+                        } 
                     }
-                    String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
-                    newDateList  = new ArrayList<String>(Arrays.asList(b.split(", ")));
                 }
-                
+//                if(date.contains(d)){ //adds room whenenver the date contains the same date
+//                    for(int i=0; i<r.length; i++){
+//                        if(!newRoomList.contains(r[i])){ //Do not add the string if the Room already exist in the array
+//                            newRoomList.add(r[i]);
+//                        }
+//                    }
+//                    String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
+//                    newDateList  = new ArrayList<String>(Arrays.asList(b.split(", ")));
+//                }        
                 checkContain();
             }
             System.out.println("newRoomList: " + newRoomList);
@@ -472,6 +482,7 @@ public class AddBookingController implements Initializable {
             updatePayment();
             if(txtDate.getValue() != null){
                 getDays();
+                readDate(formatter.format(txtDate.getValue()));
             }
         });
     }
@@ -503,7 +514,12 @@ public class AddBookingController implements Initializable {
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
         DateList = IntStream.iterate(0, i -> i + 1).limit(numOfDaysBetween).mapToObj(i -> startDate.plusDays(i)).collect(Collectors.toList()); 
         bd.setDate(DateList.toString());
-        System.out.println("DateList: "+DateList);       
+        String a = DateList.toString().replaceAll("\\[", "").replaceAll("\\]", "");
+        newDateList = Arrays.asList(a.split(", "));
+        bd.setDate(a);
+//        System.out.println("DateList: "+DateList);
+        System.out.println("newDateList: "+ newDateList);       
+        
     }
     
     private void validateTxt(){
@@ -595,7 +611,7 @@ public class AddBookingController implements Initializable {
     }
     
     private void clearbtn(JFXToggleButton a){
-        if(a.isSelected() && a.isDisable()){
+        if(a.isSelected() && a.isDisable()){ //maintain the rooms that are cancel for the datepicker date
             
         }
         else{
@@ -613,7 +629,7 @@ public class AddBookingController implements Initializable {
                 bd.setRooms(RoomList.toString());
                 count++;
                 updatePayment();
-                System.out.println("getRoom: " + bd.getRooms());
+                System.out.println("RoomList: " + bd.getRooms());
                 System.out.println("RoomCount: " + count);
             }
             else if(!a.isSelected()){
@@ -646,7 +662,9 @@ public class AddBookingController implements Initializable {
 
         clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4B); clearbtn(tb_5B);
         clearbtn(tb_6B); clearbtn(tb_7B); clearbtn(tb_8B); clearbtn(tb_9B); clearbtn(tb_10B);
- 
+        newRoomList.clear();
+        cleartgbtn(); 
+        readDate(formatter.format(txtDate.getValue()));
      }
      
      private void cleartgbtn(){        

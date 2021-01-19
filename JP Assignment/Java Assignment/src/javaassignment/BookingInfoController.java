@@ -465,8 +465,7 @@ public class BookingInfoController implements Initializable {
                     newRoomList = Arrays.asList(a.split(", "));
                     newDateList = Arrays.asList(date.split(", "));
                     txtRname.setText(name); txtContact.setText(contact); txtIC.setText(ic); txtDate.setValue(LocalDate.parse(newDateList.get(0), formatter)); 
-                    NumNightsSpinner.getValueFactory().setValue(Integer.parseInt(nightCount));;lblFees.setText(fee); lblTax.setText(tax); lblTotalfees.setText(total);
-                    System.out.println("newRoomList: " + newRoomList);
+                    NumNightsSpinner.getValueFactory().setValue(Integer.parseInt(nightCount));;lblFees.setText(fee); lblTax.setText(tax); lblTotalfees.setText(total);;
                     readDate(formatter.format(txtDate.getValue()));
                     cleartgbtn();
                     setDisable();
@@ -492,7 +491,6 @@ public class BookingInfoController implements Initializable {
         
         String id = ""; String name = ""; String contact = ""; String ic = ""; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
-        
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
             x.useDelimiter("\n");            
             while(x.hasNext()){
@@ -510,19 +508,35 @@ public class BookingInfoController implements Initializable {
                 x.next();
                 
                 String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
-                String[] r = a.split(", ");
-                if(date.contains(d)){ //adds room whenenver the date contains the same date
-                    for(int i=0; i<r.length; i++){
-                        if(!searchRoom.contains(r[i])){ //Do not add the string if the Room already exist in the array
-                            searchRoom.add(r[i]);
+                String b = date.replaceAll("\\[", "").replaceAll("\\]", "");
+                List<String> r = Arrays.asList(a.split(", "));
+                List<String> q = Arrays.asList(b.split(", ")); 
+                Iterator itr = searchDate.iterator();
+                while(itr.hasNext()){
+                    String z = (String)itr.next(); //when search, the z value is null 
+                    if(!z.isEmpty() && date.contains(z)){ //if searchDate is not empty and the date contains searchdate date then add the room
+                        for(int i=0; i<r.size(); i++){
+                            if(!searchRoom.contains(r.get(i))){ //Do not add the string if the Room already exist in the array
+                                searchRoom.add(r.get(i));
+                            }
+                        }   
+                        for(int c=0; c<q.size(); c++){                         
+                                System.out.println("fuck" + q.get(c));
+                            if(!searchDate.contains(q.get(c))){
+                                for(int i=0; i<r.size(); i++){
+                                    if(searchRoom.contains(r.get(i))){ //remove the room if searchDate does not contain the date 
+                                        searchRoom.remove(r.get(i));
+                                    }
+                                }   
+                            }
                         }
                     }
                 }
-                checkContain();
             }
+            checkContain();
             System.out.println("newRoomList: " + newRoomList);
             System.out.println("newDateList: " + newDateList);
-            System.out.println("searchRoom: " + searchRoom);
+            System.out.println("searchRoom: " + searchRoom + "\n");
         } catch (Exception ex) {
             Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         } 
@@ -539,44 +553,24 @@ public class BookingInfoController implements Initializable {
     }
     
     private void isContain(JFXToggleButton a, String b){
-        //this function validates room on same date
-        Iterator itr = searchRoom.iterator();
-        while(itr.hasNext()){
-            String y = (String)itr.next();
-            if((newRoomList.contains(b))){ //validate the rooms for current date first and set it to green
-                a.setToggleColor(Paint.valueOf("#009688"));
-                a.setToggleLineColor(Paint.valueOf("#77c2bb"));
-                a.setDisable(false);
-                a.setSelected(true);
-            }
-            else if(y.equals(b)){ //then only validate for rooms that are canceled set it to red and disabled
-                a.setToggleColor(Paint.valueOf("#bf0101"));
-                a.setToggleLineColor(Paint.valueOf("#ff4545"));
-                a.setDisable(true);
-                a.setSelected(true);
+        if(searchRoom.contains(b)){ //then only validate for rooms that are canceled set it to red and disabled
+            a.setToggleColor(Paint.valueOf("#bf0101"));
+            a.setToggleLineColor(Paint.valueOf("#ff4545"));
+            a.setDisable(true);
+            a.setSelected(true);
 
-            }
-            else if(!searchRoom.contains(b)){ //when datepicker is changed it readDate() will be triggered and reset the toggle button to normal
-                a.setToggleColor(Paint.valueOf("#009688"));
-                a.setToggleLineColor(Paint.valueOf("#77c2bb"));
-                a.setDisable(false);
-                a.setSelected(false);
-            }
-//            if(formatter.format(txtDate.getValue()).equals(searchDate.get(0))){
-//                if(searchRoom.contains(b) && newRoomList.contains(b)){ 
-//                    a.setToggleColor(Paint.valueOf("#bf0101"));
-//                    a.setToggleLineColor(Paint.valueOf("#ff4545"));
-//                    a.setDisable(true);
-//                    a.setSelected(true);
-//                }
-//                else if(!searchRoom.contains(b)){ 
-//                    a.setToggleColor(Paint.valueOf("#009688"));
-//                    a.setToggleLineColor(Paint.valueOf("#77c2bb"));
-//                    a.setDisable(false);
-//                    a.setSelected(false);
-//                }
-//               
-//            }
+        }
+        else if(!searchRoom.contains(b)){ //when datepicker is changed it readDate() will be triggered and reset the toggle button to normal
+            a.setToggleColor(Paint.valueOf("#009688"));
+            a.setToggleLineColor(Paint.valueOf("#77c2bb"));
+            a.setDisable(false);
+            a.setSelected(false);
+        }
+        if((newRoomList.contains(b))){ //validate the rooms for current date first and set it to green
+            a.setToggleColor(Paint.valueOf("#009688"));
+            a.setToggleLineColor(Paint.valueOf("#77c2bb"));
+            a.setDisable(false);
+            a.setSelected(true);
         }
     }
     
@@ -740,7 +734,7 @@ public class BookingInfoController implements Initializable {
         String a = DateList.toString().replaceAll("\\[", "").replaceAll("\\]", "");
         bd.setDate(a);
         searchDate = Arrays.asList(a.split(", "));
-        System.out.println("DateList: " +DateList);
+//        System.out.println("DateList: " +DateList);
         System.out.println("searchDate: " +searchDate);
     }
     
