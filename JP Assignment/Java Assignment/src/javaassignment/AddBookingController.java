@@ -393,6 +393,7 @@ public class AddBookingController implements Initializable {
     
     private void readDate(String d){
         int idCount = 1;
+        List<String> sameDR = new ArrayList<String>();
         String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         
@@ -423,11 +424,18 @@ public class AddBookingController implements Initializable {
                     if(idCount >= bd.getID()){
                         bd.setID(idCount);
                     }
-                    System.out.println("ID: " + bd.getID());
+                }
+                if(date.contains(d)){
+                    for(int i=0; i<r.size(); i++){
+                        if(!sameDR.contains(r.get(i))){
+                            sameDR.add(r.get(i));
+                        }
+                    }
                 }
                 Iterator itr = newDateList.iterator();
                 while(itr.hasNext()){
                     String z = (String)itr.next();
+   
                     if(date.contains(z)){
                         for(int i=0; i<r.size(); i++){
                             if(!newRoomList.contains(r.get(i))){ //Do not add the string if the Room already exist in the array
@@ -436,13 +444,12 @@ public class AddBookingController implements Initializable {
                         } 
                     }
                 }
-               if(!newDateList.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room
-                    for(int i=0; i<r.size(); i++){
-                        if(newRoomList.contains(r.get(i))){ //remove the room if searchDate does not contain the date 
-                            newRoomList.remove(r.get(i));
-                        }
-                    }   
-                }        
+                System.out.println("sameDR: " + sameDR);
+                for(int i=0; i<r.size(); i++){//if the array doesn't have the first date searched from the text then remove the room
+                    if(!newDateList.contains(q.get(0))&&!sameDR.contains(r.get(i))){ //remove the room if searchDate does not contain the date
+                          newRoomList.remove(r.get(i)); 
+                    }
+                }                    
                 checkContain();
             }
             System.out.println("newRoomList: " + newRoomList);
@@ -678,6 +685,7 @@ public class AddBookingController implements Initializable {
         txtContact.clear();
         txtIC.clear();
         txtEmail.clear();
+        txtDate.setValue(LocalDate.now());
         NumNightsSpinner.getValueFactory().setValue(1);
         
         clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4A); clearbtn(tb_5A);
@@ -685,6 +693,7 @@ public class AddBookingController implements Initializable {
 
         clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4B); clearbtn(tb_5B);
         clearbtn(tb_6B); clearbtn(tb_7B); clearbtn(tb_8B); clearbtn(tb_9B); clearbtn(tb_10B);
+        cleartgbtn();
      }
      
      private void cleartgbtn(){        

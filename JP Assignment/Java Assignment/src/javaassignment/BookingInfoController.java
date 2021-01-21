@@ -1,6 +1,7 @@
 package javaassignment;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
@@ -155,6 +156,8 @@ public class BookingInfoController implements Initializable {
     private Label lblEmail;
     @FXML
     private JFXComboBox<String> cmbBID;
+    @FXML
+    private JFXCheckBox changeSearch;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -166,6 +169,7 @@ public class BookingInfoController implements Initializable {
         validateDays();
         countRoom();
         spinnerListener();
+        searchChoice();
         lblFees.setText(null); lblTax.setText(null); lblTotalfees.setText(null);
     }   
     
@@ -208,14 +212,15 @@ public class BookingInfoController implements Initializable {
         String d = txtIC.getText();
         String e = txtEmail.getText();
         LocalDate f = txtDate.getValue();
+        String g = cmbBID.getValue();
         
-        if(a.isEmpty()){ 
+        if(a.isEmpty() && !changeSearch.isSelected()){ 
             main.setAlert("BID not specified", "The BID was not specified in the search field.\nKey in the BID in the search field before saving.");
         }
-        else if(!a.isEmpty() && txtRname.isDisable()){
+        else if(!a.isEmpty() && txtRname.isDisable() && !changeSearch.isSelected()){
             main.setAlert("BID Not Searched", "The record was not searched.\nKey in the BID value and press 'Search Icon' in order to Save.");
         }
-        if(b.isEmpty() || c.isEmpty() || d.isEmpty() || e.isEmpty()){
+        else if((b.isEmpty() &&  g == null) || c.isEmpty() || d.isEmpty() || e.isEmpty()){
             main.setAlert("Empty Fields", "One or more fields are empty.\nPlease fill in all the fields to proceed");
         }
         else if(f == null){
@@ -233,10 +238,25 @@ public class BookingInfoController implements Initializable {
         else if(bd.getRoomCount() == 0){
             main.setAlert("Room not Selected", "Please select one or more rooms to book");
         }
-        else if(!e.matches("^[A-Za-z0-9+-._]@(.+)")){
+        else if(!e.matches("^[A-Za-z0-9+-._]+@(.+)")){
             main.setAlert("Invalid Email", "Please use a valid email before saving");
         }
-        else if(!a.isEmpty() && !txtRname.isDisable()){
+        else if(!a.isEmpty() && !txtRname.isDisable() && !changeSearch.isSelected()){
+            alert1.setTitle("Save");
+            alert1.setHeaderText("Confirm Save?");
+            Optional<ButtonType> result = alert1.showAndWait();
+            
+            if(result.get() == ButtonType.YES && result.isPresent()){
+                cu.setName(b);
+                cu.setContact(c);
+                cu.setIC(d);
+                cu.setEmail(e);
+                if(saveRecord(a)){
+                    main.setAlert("Save Success", "Record Saved.");
+                }
+            }
+        }
+        else if((g != null) && changeSearch.isSelected()){
             alert1.setTitle("Save");
             alert1.setHeaderText("Confirm Save?");
             Optional<ButtonType> result = alert1.showAndWait();
@@ -256,13 +276,17 @@ public class BookingInfoController implements Initializable {
     @FXML
     private void Delete(ActionEvent event) {
         String a = txtSearch.getText();
-        if(a.isEmpty()){
+        String b = cmbBID.getValue();
+        if(!changeSearch.isSelected() && a.isEmpty()){
             main.setAlert("BID not specified", "The BID was not specified in the search field.\nSearch the BID before deleting.");
         }
-        else if(!a.isEmpty() && txtRname.isDisable()){
+        else if(!a.isEmpty() && txtRname.isDisable() && !changeSearch.isSelected()){
             main.setAlert("BID not specified", "The BID was not specified in the search field.\nSearch the BID before deleting.");
         }
-        else if(!a.isEmpty() && !txtRname.isDisable()){
+        else if(b == null && txtRname.isDisable() && changeSearch.isSelected()){
+            main.setAlert("BID not specified", "The BID was not selected in the combobox selection.\nSelect the BID before deleting.");
+        }
+        else if(!a.isEmpty() && !txtRname.isDisable() && !changeSearch.isSelected()){
             alert1.setTitle("Delete");
             alert1.setHeaderText("Confirm Delete?");
             Optional<ButtonType> result = alert1.showAndWait();
@@ -274,11 +298,33 @@ public class BookingInfoController implements Initializable {
                 }
             }
         }
+        else if(b != null && !txtRname.isDisable() && changeSearch.isSelected()){
+            alert1.setTitle("Delete");
+            alert1.setHeaderText("Confirm Delete?");
+            Optional<ButtonType> result = alert1.showAndWait();
+
+            if(result.get() == ButtonType.YES && result.isPresent()){
+                if(removeRecord(b)){
+                    main.setAlert("Delete Success", "Record Deleted");
+                    
+                }
+            }
+        }
     }
 
     @FXML
     private void Clear(ActionEvent event) {
         clearfields();
+    }
+    
+        @FXML
+    private void Search(ActionEvent event) {
+        if(txtSearch.getText().isEmpty()){
+            main.setAlert("Search Booking", "Please specify the BID before clikcing the search icon.");
+        }
+        else if(!txtSearch.getText().isEmpty()){
+            searchRecord();     
+        }
     }
     
     private boolean saveRecord(String BID){
@@ -444,11 +490,18 @@ public class BookingInfoController implements Initializable {
                 total = x.next().substring(12);
                 x.next();
                 
-                String s = cmbBID.getValue();              
-                if(s.equals(id)){
-                    //change the bool to true to stop looping 
-                    found = true;
-                }  
+                String s = cmbBID.getValue();
+                String n = txtSearch.getText();
+                if(changeSearch.isSelected() && !s.isEmpty()){
+                    if(s.equals(id)){
+                        //change the bool to true to stop looping 
+                        found = true;
+                    }              
+                }else if(!changeSearch.isSelected()){
+                    if(n.equals(id)){
+                        found = true;
+                    }
+                }
                 if(found == true){
                     //logic to do if the record is found
                     setEnable();
@@ -512,12 +565,11 @@ public class BookingInfoController implements Initializable {
                 }
                 if(!searchDate.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room
                     for(int i=0; i<r.size(); i++){
-                        if(!newRoomList.contains(r.get(i)) && !sameDR.contains(r.get(i))){
+                        if(!newRoomList.contains(r.get(i)) && !sameDR.contains(r.get(i))){ //remove rooms not booked on same days
                             searchRoom.remove(r.get(i));
                         }
-                        if(searchRoom.contains(r.get(i)) && newRoomList.contains(r.get(i)) ){
+                        if((newRoomList.contains(r.get(i)) && searchRoom.contains(r.get(i)))){
                             searchRoom.remove(r.get(i));
-                            System.out.println((q.get(0)));
                         }
                     }
                 }
@@ -606,7 +658,7 @@ public class BookingInfoController implements Initializable {
             a.setDisable(false);
             a.setSelected(false);
         }
-        if(searchRoom.contains(b) && newRoomList.contains(b)){ //if both rooms overlap then cancel the room
+        else if(searchRoom.contains(b) && newRoomList.contains(b)){ //if both rooms overlap then cancel the room
             a.setToggleColor(Paint.valueOf("#bf0101"));
             a.setToggleLineColor(Paint.valueOf("#ff4545"));
             a.setDisable(true);
@@ -685,8 +737,9 @@ public class BookingInfoController implements Initializable {
      private void validateTxt(){
 //         set the name to the BID selected from combobox
         cmbBID.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(!cmbBID.getValue().equals("Select BID")){
+            if(cmbBID.getValue() != null){ //if the checkbox is not null then search
                 searchRecord();
+                txtSearch.setText(cmbBID.getValue());
             }
         });
          
@@ -782,6 +835,23 @@ public class BookingInfoController implements Initializable {
         }
     }
     
+    @FXML
+    private void searchChoice(){
+        if(changeSearch.isSelected()){
+            txtSearch.setVisible(false);
+            btnSearch.setVisible(false);
+            cmbBID.setValue(null);
+            cmbBID.setVisible(true);
+            cmbBID.setDisable(false);
+        }
+        else if(!changeSearch.isSelected()){
+            cmbBID.setVisible(false);
+            cmbBID.setDisable(true);
+            txtSearch.setVisible(true);
+            btnSearch.setVisible(true);
+        }
+    }
+    
     private void getDays(){
         LocalDate startDate = txtDate.getValue();
         String d = formatter.format(startDate);
@@ -835,7 +905,7 @@ public class BookingInfoController implements Initializable {
     private void clearfields(){
         //clear txtfields
         txtSearch.clear();
-        cmbBID.setValue("Select BID");
+        cmbBID.setValue(null);
         txtRname.clear();
         txtContact.clear();
         txtIC.clear();

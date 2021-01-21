@@ -62,7 +62,7 @@ public class FXMain extends Application {
     
     @FXML
     protected void Login(ActionEvent event) throws IOException{
-        Parent HomeView = FXMLLoader.load(getClass().getResource("Home.fxml"));
+        Parent HomeView = FXMLLoader.load(getClass().getResource("FXML/Home.fxml"));
         Scene HomeViewScene = new Scene(HomeView);
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
@@ -79,7 +79,7 @@ public class FXMain extends Application {
         
         Optional<ButtonType> result = alert.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.YES) {
-            Parent LoginView = FXMLLoader.load(getClass().getResource("Login.fxml"));
+            Parent LoginView = FXMLLoader.load(getClass().getResource("FXML/Login.fxml"));
             Scene LoginViewScene = new Scene(LoginView);
 
             Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
@@ -91,7 +91,7 @@ public class FXMain extends Application {
     
     @FXML
     protected void Booking(ActionEvent event) throws IOException{
-        Parent BookingView = FXMLLoader.load(getClass().getResource("BookingInfo.fxml"));
+        Parent BookingView = FXMLLoader.load(getClass().getResource("FXML/BookingInfo.fxml"));
         Scene BookingViewScene = new Scene(BookingView);
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
@@ -102,7 +102,7 @@ public class FXMain extends Application {
 
     @FXML
     protected void AddBooking(ActionEvent event) throws IOException{
-        Parent AddBookingView = FXMLLoader.load(getClass().getResource("AddBooking.fxml"));
+        Parent AddBookingView = FXMLLoader.load(getClass().getResource("FXML/AddBooking.fxml"));
         Scene AddBookingViewScene = new Scene(AddBookingView);
         
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();

@@ -44,7 +44,7 @@ IC: 111111-11-1111
 Email: test@gmail.com
 Date: [2021-01-11]
 Nights: 1
-Room No: [Room 1A]
+Room No: [Room 2A]
 Room Count: 1
 Fee: 350.0
 Tax: 45.0
