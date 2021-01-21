@@ -1,6 +1,7 @@
 package javaassignment;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
@@ -58,10 +59,12 @@ public class BookingInfoController implements Initializable {
     private final String curFile = "\\Bookings.txt";
     private List<String>RoomList = new ArrayList<String>(); //RoomList and DateList is used for saving records 
     private List<LocalDate>DateList;
+    private List<String>searchBID = new ArrayList<String>(); //get all BID and out in combobox
     private List<String>newRoomList; //newRoomList and newDateList is used to read records for the searched BID
     private List<String>newDateList = new ArrayList<String>(); 
     private List<String>searchRoom = new ArrayList<String>(); //searchRoom is used for validate rooms
-    private List<String>searchDate;
+    private List<String>searchDate; 
+    private List<String> sameDR = new ArrayList<String>(); //get all booked room for selected date
     private long numOfDaysBetween;
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
     private final Alert alert1 = new Alert(Alert.AlertType.CONFIRMATION, null, ButtonType.YES, ButtonType.NO);
@@ -144,13 +147,19 @@ public class BookingInfoController implements Initializable {
     private JFXButton btnSearch;
     @FXML
     private JFXButton btnDelete;
-    
-    
     @FXML
     private JFXButton btnBooking;
+    @FXML
+    private JFXTextField txtEmail;
+    @FXML
+    private Label lblEmail;
+    @FXML
+    private JFXComboBox<String> cmbBID;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         checkFile();
+        readBID();
         setDisable();
         main.showTime(dateTime);
         validateTxt();
@@ -197,45 +206,35 @@ public class BookingInfoController implements Initializable {
         String b = txtRname.getText();
         String c = txtContact.getText();
         String d = txtIC.getText();
-        LocalDate  e = txtDate.getValue();
+        String e = txtEmail.getText();
+        LocalDate f = txtDate.getValue();
         
-        if(a.isEmpty()){
-            alert.setTitle("BID not specified");
-            alert.setHeaderText("The BID was not specified in the search field.\nKey in the BID in the search field before saving.");
-            alert.showAndWait();  
+        if(a.isEmpty()){ 
+            main.setAlert("BID not specified", "The BID was not specified in the search field.\nKey in the BID in the search field before saving.");
         }
         else if(!a.isEmpty() && txtRname.isDisable()){
-            alert.setTitle("BID Not Searched");
-            alert.setHeaderText("The record was not searched.\nKey in the BID value and press 'Search Icon' in order to Save.");
-            alert.showAndWait();
+            main.setAlert("BID Not Searched", "The record was not searched.\nKey in the BID value and press 'Search Icon' in order to Save.");
         }
-        if(b.isEmpty() || c.isEmpty() || d.isEmpty()){
-            alert.setTitle("Empty Fields");
-            alert.setHeaderText("One or more fields are empty.\nPlease fill in all the fields to proceed");
-            alert.showAndWait();
+        if(b.isEmpty() || c.isEmpty() || d.isEmpty() || e.isEmpty()){
+            main.setAlert("Empty Fields", "One or more fields are empty.\nPlease fill in all the fields to proceed");
         }
-        else if(e == null){
-            alert.setTitle("Date Not Selected");
-            alert.setHeaderText("Please Select a date from the date picker to Book");
-            alert.showAndWait();
+        else if(f == null){
+            main.setAlert("Date Not Selected", "Please Select a date from the date picker to Book");
         }
         //validate if the txtcontact is invalid
         else if(c.replaceAll("-", "").length() < 10){
-            alert.setTitle("Invalid Contact Number");
-            alert.setHeaderText("Please use a valid phone number. e.g '012-3456789'");
-            alert.showAndWait();
+            main.setAlert("Invalid Contact Number", "Please use a valid phone number. e.g '012-3456789'");
         }
         //validate if the txtic is invalid
         else if(d.replaceAll("-", "").length() < 12){
-            alert.setTitle("Invalid IC");
-            alert.setHeaderText("Please use a valid identification number e.g '010234-56-7890'");
-            alert.showAndWait();
+            main.setAlert("Invalid IC", "Please use a valid identification number e.g '010234-56-7890'");
         }
         //validate if no toggle btns are selected
         else if(bd.getRoomCount() == 0){
-            alert.setTitle("Room not Selected");
-            alert.setHeaderText("Please select one or more rooms to book");
-            alert.showAndWait();
+            main.setAlert("Room not Selected", "Please select one or more rooms to book");
+        }
+        else if(!e.matches("^[A-Za-z0-9+-._]@(.+)")){
+            main.setAlert("Invalid Email", "Please use a valid email before saving");
         }
         else if(!a.isEmpty() && !txtRname.isDisable()){
             alert1.setTitle("Save");
@@ -246,10 +245,9 @@ public class BookingInfoController implements Initializable {
                 cu.setName(b);
                 cu.setContact(c);
                 cu.setIC(d);
+                cu.setEmail(e);
                 if(saveRecord(a)){
-                    alert.setTitle("Save Success");
-                    alert.setHeaderText("Record Saved.");
-                    alert.showAndWait();
+                    main.setAlert("Save Success", "Record Saved.");
                 }
             }
         }
@@ -259,14 +257,10 @@ public class BookingInfoController implements Initializable {
     private void Delete(ActionEvent event) {
         String a = txtSearch.getText();
         if(a.isEmpty()){
-            alert.setTitle("BID not specified");
-            alert.setHeaderText("The BID was not specified in the search field.\nSearch the BID before deleting.");
-            alert.showAndWait();
+            main.setAlert("BID not specified", "The BID was not specified in the search field.\nSearch the BID before deleting.");
         }
         else if(!a.isEmpty() && txtRname.isDisable()){
-            alert.setTitle("BID not specified");
-            alert.setHeaderText("The BID was not specified in the search field.\nSearch the BID before deleting.");
-            alert.showAndWait();
+            main.setAlert("BID not specified", "The BID was not specified in the search field.\nSearch the BID before deleting.");
         }
         else if(!a.isEmpty() && !txtRname.isDisable()){
             alert1.setTitle("Delete");
@@ -275,9 +269,7 @@ public class BookingInfoController implements Initializable {
 
             if(result.get() == ButtonType.YES && result.isPresent()){
                 if(removeRecord(a)){
-                    alert.setTitle("Delete Success");
-                    alert.setHeaderText("Record Deleted.");
-                    alert.showAndWait();
+                    main.setAlert("Delete Success", "Record Deleted");
                     
                 }
             }
@@ -296,10 +288,10 @@ public class BookingInfoController implements Initializable {
         File newFile = new File(file + tmpFile);
         getDays(); //set the DateList array
         
-        String id; String name; String contact; String ic; String date; String nightCount; String rooms; 
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         
-        String newName = cu.getName(); String newContact = cu.getContact(); String newIC = cu.getIC(); int newNightCount = bd.getNightCount();
+        String newName = cu.getName(); String newContact = cu.getContact(); String newIC = cu.getIC(); String newEmail = cu.getEmail(); int newNightCount = bd.getNightCount();
         double newFee = bd.getFees() ; double newTax = bd.getTax(); double newTotal = bd.getTotal(); String newRoom = bd.getRooms();
         
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
@@ -312,6 +304,7 @@ public class BookingInfoController implements Initializable {
                 name = x.next();
                 contact = x.next();
                 ic = x.next();
+                email = x.next();
                 date = x.next();
                 nightCount = x.next();
                 rooms = x.next();
@@ -327,6 +320,7 @@ public class BookingInfoController implements Initializable {
                         "Reservee Name: " + newName + "\n" + 
                         "Contact: " + newContact + "\n" + 
                         "IC: " + newIC + "\n" + 
+                        "Email: " + newEmail + "\n" +
                         "Date: " + this.DateList + "\n" + 
                         "Nights: " + newNightCount + "\n" + 
                         "Room No: " + newRoom + "\n" + 
@@ -339,10 +333,10 @@ public class BookingInfoController implements Initializable {
                     saved = true;
                 }
                 if(!id.substring(12).equals(BID)){
-                    System.out.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + 
+                    System.out.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + email + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + 
                     "\n" + fee + "\n" + tax + "\n" + total + "\n");
                     
-                    pw.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + 
+                    pw.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + email + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + 
                     fee + "\n" + tax + "\n" + total + "\n");
                 }
             }        
@@ -372,7 +366,7 @@ public class BookingInfoController implements Initializable {
         File oldFile = new File(file + curFile);
         File newFile = new File(file + tmpFile);
         
-        String id; String name; String contact; String ic; String date; String nightCount; String rooms; 
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
  
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
@@ -385,6 +379,7 @@ public class BookingInfoController implements Initializable {
                 name = x.next();
                 contact = x.next();
                 ic = x.next();
+                email = x.next();
                 date = x.next();
                 nightCount = x.next();
                 rooms = x.next();
@@ -399,7 +394,7 @@ public class BookingInfoController implements Initializable {
                 }
                 if(!id.substring(12).equals(BID)){
 //                    System.out.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + fee + "\n" + tax + "\n" + total + "\n");
-                    pw.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + date + "\n" 
+                    pw.println(id + "\n" + name + "\n" + contact + "\n" + ic + "\n" + email + "\n" + date + "\n" 
                             + nightCount + "\n" +  rooms + "\n" + roomCount + "\n" + fee + "\n" + tax + "\n" + total + "\n");
                 }
             }        
@@ -423,18 +418,15 @@ public class BookingInfoController implements Initializable {
         return deleted;
     }  
 
-    @FXML
-    private void searchRecord(ActionEvent event) {
+    private void searchRecord() {
         boolean found = false;
         searchRoom.clear(); //reset the toggle buttons to start a new search 
-        String id = ""; String name = ""; String contact = ""; String ic = ""; String date; String nightCount; String rooms; 
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
             x.useDelimiter("\n");
             if(!x.hasNext()){                              
-                alert.setTitle("No Records");
-                alert.setHeaderText("There are no records contained");
-                alert.showAndWait();            
+                main.setAlert("No Records", "There are no records contained");
             }
             while(x.hasNext() && !found){
                 //loop through the record until no more records to loop or the record has been found
@@ -442,6 +434,7 @@ public class BookingInfoController implements Initializable {
                 name = x.next().substring(15);;
                 contact = x.next().substring(9);
                 ic = x.next().substring(4);
+                email = x.next().substring(7);
                 date = x.next().substring(6).replaceAll("\\[", "").replaceAll("\\]", "");
                 nightCount = x.next().substring(8);
                 rooms = x.next().substring(9);
@@ -451,7 +444,7 @@ public class BookingInfoController implements Initializable {
                 total = x.next().substring(12);
                 x.next();
                 
-                String s = txtSearch.getText();              
+                String s = cmbBID.getValue();              
                 if(s.equals(id)){
                     //change the bool to true to stop looping 
                     found = true;
@@ -462,8 +455,9 @@ public class BookingInfoController implements Initializable {
                     String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
                     newRoomList = Arrays.asList(a.split(", "));
                     newDateList = Arrays.asList(date.split(", "));
-                    txtRname.setText(name); txtContact.setText(contact); txtIC.setText(ic); txtDate.setValue(LocalDate.parse(newDateList.get(0), formatter)); 
+                    txtRname.setText(name); txtContact.setText(contact); txtIC.setText(ic); txtEmail.setText(email); txtDate.setValue(LocalDate.parse(newDateList.get(0), formatter)); 
                     NumNightsSpinner.getValueFactory().setValue(Integer.parseInt(nightCount));;lblFees.setText(fee); lblTax.setText(tax); lblTotalfees.setText(total);;
+                    getDays();
                     readDate(formatter.format(txtDate.getValue()));
                     cleartgbtn();
                     setDisable();
@@ -473,9 +467,7 @@ public class BookingInfoController implements Initializable {
                 }
                 else if(!found && !x.hasNext()){
                     //logic to do if the record if not found/exist
-                    alert.setTitle("Recrod Not Found");
-                    alert.setHeaderText("The record you're searching for does not exist.");
-                    alert.showAndWait();
+                    main.setAlert("Record Not Found", "The record you're searching for does not exist.");
                     clearfields();
                     break;
                 }
@@ -486,8 +478,8 @@ public class BookingInfoController implements Initializable {
     }
     
     private void readDate(String d){
-        
-        String id = ""; String name = ""; String contact = ""; String ic = ""; String date; String nightCount; String rooms; 
+        sameDR.clear(); //clear array containing booked room on same date
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
             x.useDelimiter("\n");            
@@ -496,6 +488,7 @@ public class BookingInfoController implements Initializable {
                 name = x.next().substring(15);
                 contact = x.next().substring(9);
                 ic = x.next().substring(4);
+                email = x.next().substring(7);
                 date = x.next().substring(6);
                 nightCount = x.next().substring(8);
                 rooms = x.next().substring(9);
@@ -510,28 +503,72 @@ public class BookingInfoController implements Initializable {
                 List<String> r = Arrays.asList(a.split(", "));
                 List<String> q = Arrays.asList(b.split(", ")); 
                 Iterator itr = searchDate.iterator();
+                if(date.contains(d)){
+                    for(int i=0; i<r.size(); i++){
+                        if(!sameDR.contains(r.get(i))){
+                            sameDR.add(r.get(i));
+                        }
+                    }
+                }
+                if(!searchDate.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room
+                    for(int i=0; i<r.size(); i++){
+                        if(!newRoomList.contains(r.get(i)) && !sameDR.contains(r.get(i))){
+                            searchRoom.remove(r.get(i));
+                        }
+                        if(searchRoom.contains(r.get(i)) && newRoomList.contains(r.get(i)) ){
+                            searchRoom.remove(r.get(i));
+                            System.out.println((q.get(0)));
+                        }
+                    }
+                }
                 while(itr.hasNext()){
                     String z = (String)itr.next(); //when search, the z value is null 
                     if(!z.isEmpty() && date.contains(z)){ //if searchDate is not empty and the date contains searchdate date then add the room
                         for(int i=0; i<r.size(); i++){
-                            if(!searchRoom.contains(r.get(i))){ //Do not add the string if the Room already exist in the array
+                            if(!searchRoom.contains(r.get(i)) && !id.equals(cmbBID.getValue())){ //Do not add the string if the Room already exist in the array
                                 searchRoom.add(r.get(i));
                             }
-                        }   
+                        }    
                     }
                 }
-                if(!searchDate.contains(q.get(0))){
-                    for(int i=0; i<r.size(); i++){
-                        if(searchRoom.contains(r.get(i))){ //remove the room if searchDate does not contain the date 
-                            searchRoom.remove(r.get(i));
-                        }
-                    }   
+            }
+            checkContain();                
+            System.out.println("sameDR: " + sameDR);
+            System.out.println("searchDate: " + searchDate);
+            System.out.println("newDateList: " + newDateList);
+            System.out.println("newRoomList: " + newRoomList);
+            System.out.println("searchRoom: " + searchRoom + "\n");
+        } catch (Exception ex) {
+            Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
+        } 
+    }
+    
+    private void readBID(){
+        searchBID.clear();
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
+        String roomCount; String fee; String tax; String total;
+        try (Scanner x = new Scanner(new FileReader(file + curFile))){
+            x.useDelimiter("\n");            
+            while(x.hasNext()){
+                id = x.next().substring(12);
+                name = x.next().substring(15);
+                contact = x.next().substring(9);
+                ic = x.next().substring(4);
+                email = x.next().substring(7);
+                date = x.next().substring(6);
+                nightCount = x.next().substring(8);
+                rooms = x.next().substring(9);
+                roomCount = x.next().substring(12);
+                fee = x.next().substring(5);
+                tax = x.next().substring(5);
+                total = x.next().substring(12);
+                x.next();
+                              
+                if(id.matches(".*BID.*")){
+                    searchBID.add(id);
+                    cmbBID.getItems().add(id);
                 }
             }
-            checkContain();
-            System.out.println("newRoomList: " + newRoomList);
-            System.out.println("newDateList: " + newDateList);
-            System.out.println("searchRoom: " + searchRoom + "\n");
         } catch (Exception ex) {
             Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         } 
@@ -554,15 +591,30 @@ public class BookingInfoController implements Initializable {
             a.setDisable(false);
             a.setSelected(true);
         }
-        if(searchRoom.contains(b)){ //then only validate for rooms that are canceled set it to red and disabled
+        else if(searchRoom.contains(b)){ //then only validate for rooms that are canceled set it to red and disabled
             a.setToggleColor(Paint.valueOf("#bf0101"));
             a.setToggleLineColor(Paint.valueOf("#ff4545"));
             a.setDisable(true);
             a.setSelected(true);
-            RoomList.remove(b); //if roomlist array element b is same as searchRoom array element b then remove that element
-            updatePayment();// this is to validate the rooms after disabling the toggle button using number spinner
-            System.out.println("RoomList: " + RoomList + "\n"+ RoomList.size());
+//            RoomList.remove(b); //if roomlist array element b is same as searchRoom array element b then remove that element
+//            updatePayment();// this is to validate the rooms after disabling the toggle button using number spinner
+//            System.out.println("RoomList: " + RoomList + "\n"+ RoomList.size());
          }
+        else if(!searchRoom.contains(b)){ //then only validate for rooms that are canceled set it to red and disabled
+            a.setToggleColor(Paint.valueOf("#009688"));
+            a.setToggleLineColor(Paint.valueOf("#77c2bb"));
+            a.setDisable(false);
+            a.setSelected(false);
+        }
+        if(searchRoom.contains(b) && newRoomList.contains(b)){ //if both rooms overlap then cancel the room
+            a.setToggleColor(Paint.valueOf("#bf0101"));
+            a.setToggleLineColor(Paint.valueOf("#ff4545"));
+            a.setDisable(true);
+            a.setSelected(true);
+            RoomList.remove(b);
+            bd.setRooms(RoomList.toString());
+            updatePayment();
+        }
     }
     
     private void isSelected(JFXToggleButton a, String b){
@@ -575,7 +627,7 @@ public class BookingInfoController implements Initializable {
                 RoomList.add(b);
                 bd.setRooms(RoomList.toString());
                 updatePayment(); //updates the fees after adding the room
-//                System.out.println("Room List: " + RoomList + "\n"+ RoomList.size());
+                System.out.println("Room List: " + RoomList + "\n"+ RoomList.size());
             }
         else if(!a.isSelected()){//decrement the roomCount
             Iterator itr = RoomList.iterator();
@@ -586,9 +638,9 @@ public class BookingInfoController implements Initializable {
                     itr.remove();
                     bd.setRooms(RoomList.toString());
                     updatePayment(); //updates the fees after removing the room
+                    System.out.println("RoomList: " + RoomList + "\n"+ RoomList.size());
                 }
             }          
-//            System.out.println("RoomList: " + RoomList + "\n"+ RoomList.size());
         }
      }
     
@@ -631,6 +683,13 @@ public class BookingInfoController implements Initializable {
     }
     
      private void validateTxt(){
+//         set the name to the BID selected from combobox
+        cmbBID.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(!cmbBID.getValue().equals("Select BID")){
+                searchRecord();
+            }
+        });
+         
          //validating textfields
         txtRname.textProperty().addListener((observable, oldValue, newValue) -> {
            if(!newValue.matches("\\sa-zA-Z*")){
@@ -639,7 +698,10 @@ public class BookingInfoController implements Initializable {
        });
         
         txtContact.textProperty().addListener((observable, oldValue, newValue) -> {
-           if(!newValue.matches("^[\\d-]+")){
+            if(newValue.isEmpty()){
+                validateEffects(txtContact, lblContact, true, "");
+            }
+            else if(!newValue.matches("^[\\d-]+")){
                 txtContact.setText(newValue.replaceAll("[^\\d]", ""));
             }
             else if(newValue.length() > 11){
@@ -662,7 +724,10 @@ public class BookingInfoController implements Initializable {
         });
         
         txtIC.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("^[\\d-]+")){
+            if(newValue.isEmpty()){
+                validateEffects(txtIC, lblIC, true, "");
+            }
+            else if(!newValue.matches("^[\\d-]+")){
                 txtIC.setText(newValue.replaceAll("[^\\d]", ""));
             }
             else if(newValue.length() > 14){
@@ -685,6 +750,19 @@ public class BookingInfoController implements Initializable {
             else if(!newValue.matches("^\\d{6}-\\d{2}-\\d{4}$")){
                 String a = "Invalid IC";
                 validateEffects(txtIC, lblIC, false, a);
+            }
+        });
+        
+        txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.isEmpty()){
+                validateEffects(txtEmail, lblEmail, true, "");
+            }
+            else if(newValue.matches("^[A-Za-z0-9+_.-]+@(.+)")){
+                validateEffects(txtEmail, lblEmail, true, "");
+            }
+            else if(!newValue.matches("^[A-Za-z0-9+_.-]+@(.+)")){
+                String a = "Invalid Email";
+                validateEffects(txtEmail, lblEmail, false, a);
             }
         });
     }
@@ -724,7 +802,7 @@ public class BookingInfoController implements Initializable {
         bd.setDate(a);
         searchDate = Arrays.asList(a.split(", "));
 //        System.out.println("DateList: " +DateList);
-        System.out.println("searchDate: " +searchDate);
+//        System.out.println("searchDate: " +searchDate);
     }
     
     private void cleartgbtn(){
@@ -757,9 +835,11 @@ public class BookingInfoController implements Initializable {
     private void clearfields(){
         //clear txtfields
         txtSearch.clear();
+        cmbBID.setValue("Select BID");
         txtRname.clear();
         txtContact.clear();
         txtIC.clear();
+        txtEmail.clear();
         txtDate.getEditor().setVisible(false);
         NumNightsSpinner.getValueFactory().setValue(1);
 
@@ -771,6 +851,7 @@ public class BookingInfoController implements Initializable {
         txtRname.setDisable(true);
         txtContact.setDisable(true);
         txtIC.setDisable(true);
+        txtEmail.setDisable(true);
         txtDate.setDisable(true);
         NumNightsSpinner.setDisable(true);
         
@@ -785,6 +866,7 @@ public class BookingInfoController implements Initializable {
         txtRname.setDisable(false);
         txtContact.setDisable(false);
         txtIC.setDisable(false);
+        txtEmail.setDisable(false);
         txtDate.getEditor().setVisible(true);
         txtDate.setDisable(false);
         NumNightsSpinner.setDisable(false);

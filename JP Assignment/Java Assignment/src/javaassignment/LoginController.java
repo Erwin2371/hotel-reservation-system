@@ -21,14 +21,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 
 class Staff {
     protected int ID;
@@ -84,10 +80,8 @@ public class LoginController implements Initializable {
         String c = txtPass2.getText();
         
         if(a.isEmpty() && b.isEmpty()){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Login Error");
-            alert.setHeaderText("Username and Password are empty");
-            alert.showAndWait();
+            main.setAlert("Login Error", "Username and Password are empty");
+            
         }else if(txtPass.isVisible()){          
             checkCred(a, b, event);
 
@@ -127,28 +121,23 @@ public class LoginController implements Initializable {
         String c = txtPass2.getText();
 
         if(a.isEmpty() && b.isEmpty() && c.isEmpty()){ //validate empty fields and prompt alert 
-            alert.setTitle("Resgistration Error");
-            alert.setHeaderText("Username and Password are empty");
-            alert.showAndWait();
+            main.setAlert("Registration Error", "Username and Password are empty");
+            
         }
         else if(b.length() < 8 && c.length() < 8){ //validate password field if less than 8 characters
-            alert.setTitle("Resgistration Error");
-            alert.setHeaderText("Minimum password length requires\n8 or more characters");
-            alert.showAndWait();
+            main.setAlert("Resgistration Error", "Minimum password length requires\n8 or more characters");
+            
         }
         else if(checkDuplicate(a)){ //checks for existing staff username
-            alert.setTitle("Registration Error");
-            alert.setHeaderText("The username already exists,\nPlease use another username.");
-            alert.showAndWait();
+            main.setAlert("Registration Error", "The username already exists,\nPlease use another username.");
+            
         }
         else{
             st.setUsername(a);
             if(txtPass.isVisible()){
                 st.setPassword(b);
-                if(addCred(id, a, b)){ //create staff
-                    alert.setTitle("Resgistration");
-                    alert.setHeaderText("User Successfully Created");
-                    alert.showAndWait();
+                if(addCred(id, a, b)){ //create staff;
+                    main.setAlert("Registration", "User Successfully Created");
                     clearfields();
                     readFile();
                 }
@@ -156,9 +145,7 @@ public class LoginController implements Initializable {
             if(txtPass2.isVisible()){
                 st.setPassword(c);
                 if(addCred(id, a, c)){ //create staff
-                    alert.setTitle("Resgistration");
-                    alert.setHeaderText("User Successfully Created");
-                    alert.showAndWait();
+                    main.setAlert("Registration", "User Successfully Created");
                     clearfields();
                     readFile();
                 }
@@ -226,9 +213,8 @@ public class LoginController implements Initializable {
             x.useDelimiter("\n");
             
             if(!x.hasNext()){
-                alert.setTitle("Records Null");
-                alert.setHeaderText("No records exist in the file");
-                alert.showAndWait();
+                main.setAlert("Records Null", "No records exist in the file");
+                
             }
             
             while(x.hasNext() && !found){
@@ -239,17 +225,13 @@ public class LoginController implements Initializable {
                 
                 if(uname.equals(username) && pass.equals(password)){
                     found = true;
-                    alert.setTitle("Login");
-                    alert.setHeaderText("Login Success");
-                    alert.showAndWait();
+                    main.setAlert("Login", "Login Success");
                     main.Login(event);
                    
                 }
             }
             if(!found){
-                alert.setTitle("Login Failed");
-                alert.setHeaderText("Incorrect Username or Password");
-                alert.showAndWait();
+                main.setAlert("Login Failed", "Incorrect Username or Password");
             }
             
         } catch (FileNotFoundException e) {

@@ -118,6 +118,21 @@
                <children>
                   <AnchorPane prefHeight="80.0" prefWidth="382.0">
                      <children>
+                        <Label layoutX="91.0" layoutY="30.0" prefHeight="21.0" prefWidth="44.0" text="Email" />
+                        <JFXTextField fx:id="txtEmail" layoutX="165.0" layoutY="19.0" prefHeight="31.0" prefWidth="190.0">
+                           <tooltip>
+                              <Tooltip text="e.g: 010123-45-6789" />
+                           </tooltip>
+                        </JFXTextField>
+                        <Label fx:id="lblEmail" layoutX="171.0" layoutY="59.0" text="Label" textFill="RED" visible="false">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="80.0" prefWidth="382.0">
+                     <children>
                         <JFXDatePicker fx:id="txtDate" defaultColor="#4059a9" editable="false" layoutX="169.0" layoutY="25.0" prefHeight="31.0" prefWidth="208.0" promptText="Select Date" />
                         <Label layoutX="99.0" layoutY="30.0" text="Date :" />
                      </children>
@@ -131,7 +146,6 @@
                            </tooltip></Spinner>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="82.0" prefWidth="382.0" />
                </children>
             </VBox>
             <Label layoutX="47.0" layoutY="43.0" text="Booking Details">

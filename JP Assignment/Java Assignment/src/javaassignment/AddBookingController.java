@@ -47,6 +47,7 @@ class Customer{
     private String name;
     private String contact;
     private String IC;
+    private String email;
     
     public void setName(String a){
         name = a;
@@ -57,6 +58,9 @@ class Customer{
     public void setIC(String a){
         IC = a;
     }
+    public void setEmail(String n){
+        email = n;
+    }
     public String getName(){
         return name;
     }
@@ -65,6 +69,9 @@ class Customer{
     }
     public String getIC(){
         return IC;
+    }
+    public String getEmail(){
+        return email;
     }
 }
 
@@ -232,6 +239,10 @@ public class AddBookingController implements Initializable {
     private Label lblIC;
     @FXML
     private JFXButton btnClear;
+    @FXML
+    private JFXTextField txtEmail;
+    @FXML
+    private Label lblEmail;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -283,7 +294,7 @@ public class AddBookingController implements Initializable {
         //check file exists or not
         try {
             FileReader filer = new FileReader(file + "\\Bookings.txt");
-            System.err.println("File Exists!");
+            System.out.println("File Exists!");
         } catch (FileNotFoundException e) {
             try {
                 FileWriter fw = new FileWriter(file + "\\Bookings.txt");
@@ -298,59 +309,51 @@ public class AddBookingController implements Initializable {
     private void Book(ActionEvent event) {
         String rname = txtRname.getText();
         String contact = txtContact.getText();
-        String ic = txtIC.getText();      
+        String ic = txtIC.getText();
+        String email = txtEmail.getText();
         
         //validate is there is empty fields
         if(rname.isEmpty() || contact.isEmpty() || ic.isEmpty()){
-            alert.setTitle("Empty Fields");
-            alert.setHeaderText("One or more fields are empty.\nPlease fill in all the fields to proceed");
-            alert.showAndWait();
+            main.setAlert("Empty Fields", "One or more fields are empty.\nPlease fill in all the fields to proceed");
         }
         else if(txtDate.getValue() == null){
-            alert.setTitle("Date Not Selected");
-            alert.setHeaderText("Please Select a date from the date picker to Book");
-            alert.showAndWait();
+            main.setAlert("Date Not Selected", "Please Select a date from the date picker to Book");
         }
-        //validate if the txtcontact is invalid
+        //validate if the contact is invalid
         else if(contact.replaceAll("-", "").length() < 10){
-            alert.setTitle("Invalid Contact Number");
-            alert.setHeaderText("Please use a valid phone number. e.g '012-3456789'");
-            alert.showAndWait();
+            main.setAlert("Invalid Contact Number", "Please use a valid phone number. e.g '012-3456789'");
         }
-        //validate if the txtic is invalid
+        //validate if the ic is invalid
         else if(ic.replaceAll("-", "").length() < 12){
-            alert.setTitle("Invalid IC");
-            alert.setHeaderText("Please use a valid identification number e.g '010234-56-7890'");
-            alert.showAndWait();
+            main.setAlert("Invalid IC", "Please use a valid identification number e.g '010234-56-7890'");
+        }
+        //validate if the email is invalid
+        else if(!txtEmail.getText().matches("^[A-Za-z0-9+_.-]+@(.+)") || lblEmail.isVisible()){
+            main.setAlert("Invalid Email", "Please use a valid email before booking e.g 'johndoe@gmail.com'");
         }
         //validate if no toggle btns are selected
         else if(bd.getRoomCount() == 0){
-            alert.setTitle("Room not Selected");
-            alert.setHeaderText("Please select one or more rooms to book");
-            alert.showAndWait();
+            main.setAlert("Room not Selected", "Please select one or more rooms to book");
         }
         else{
             cu.setName(rname); //set name variable
             cu.setContact(contact); //set contact variable 
             cu.setIC(ic); //set ic variable
+            cu.setEmail(email); //set email variable
             String date = DateList.toString(); 
             bd.setDate(date); //set date variable
             //create the booking 
-            if(createBooking(bd.getID(), cu.getName(), cu.getContact(), cu.getIC(), bd.getDate(), bd.getNightCount(), RoomList, 
+            if(createBooking(bd.getID(), cu.getName(), cu.getContact(), cu.getIC(), cu.getEmail(), bd.getDate(), bd.getNightCount(), RoomList, 
                     bd.getRoomCount(), bd.getFees(), bd.getTax(), bd.getTotal())){
-                alert.setTitle("Create Booking");
-                alert.setHeaderText("Booking Success");
-                alert.showAndWait();
+                main.setAlert("create Booking", "Booking Success");
             }
             else{
-                alert.setTitle("Create Booking");
-                alert.setHeaderText("Booking Failed");
-                alert.showAndWait();
+                main.setAlert("Create Booking", "Booking Failed");
             }
         }           
     }
     
-    private boolean createBooking(int id, String name, String contact, String ic, String date, 
+    private boolean createBooking(int id, String name, String contact, String ic, String email, String date, 
             int nights, List rooms, int rcount, double fee, double tax, double total){
         boolean created = false;
         try {
@@ -363,6 +366,7 @@ public class AddBookingController implements Initializable {
                 "Reservee Name: " + name + "\n" +
                 "Contact: " + contact + "\n" +
                 "IC: " + ic + "\n" +
+                "Email: " + email + "\n" +
                 "Date: " + date + "\n" +
                 "Nights: " + nights + "\n" +
                 "Room No: " + rooms + "\n" +
@@ -389,7 +393,7 @@ public class AddBookingController implements Initializable {
     
     private void readDate(String d){
         int idCount = 1;
-        String id; String name; String contact; String ic; String date; String nightCount; String rooms; 
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         
         try(Scanner x = new Scanner(new File(file + curFile))){
@@ -400,6 +404,7 @@ public class AddBookingController implements Initializable {
                 name = x.next().substring(15);
                 contact = x.next().substring(9);
                 ic = x.next().substring(4);
+                email = x.next().substring(7);
                 date = x.next().substring(6);
                 nightCount = x.next().substring(8);
                 rooms = x.next().substring(9);
@@ -524,14 +529,16 @@ public class AddBookingController implements Initializable {
     private void validateTxt(){
         //validate all txt fields
         txtRname.textProperty().addListener((observable, oldValue, newValue) -> {
-           if(!newValue.matches("\\^[sa-zA-Z]*$")){
+           if(!newValue.matches("\\sa-zA-Z*")){
                txtRname.setText(newValue.replaceAll("[^\\sa-zA-Z]", ""));;
            }
-           cu.setName(newValue);
        });
         
         txtContact.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("^[\\d-]+")){
+            if(newValue.isEmpty()){
+                validateEffects(txtContact, lblContact, true, "");
+            }
+            else if(!newValue.matches("^[\\d-]+")){
                 txtContact.setText(newValue.replaceAll("[^\\d]", ""));
             }
             else if(newValue.length() > 11){
@@ -554,7 +561,10 @@ public class AddBookingController implements Initializable {
         });
         
         txtIC.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("^[\\d-]+")){
+            if(newValue.isEmpty()){
+                validateEffects(txtIC, lblIC, true, "");
+            }
+            else if(!newValue.matches("^[\\d-]+")){
                 txtIC.setText(newValue.replaceAll("[^\\d]", ""));
             }
             else if(newValue.length() > 14){
@@ -577,6 +587,19 @@ public class AddBookingController implements Initializable {
             else if(!newValue.matches("^\\d{6}-\\d{2}-\\d{4}$")){
                 String a = "Invalid IC";
                 validateEffects(txtIC, lblIC, false, a);
+            }
+        });
+        
+        txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.isEmpty()){
+                validateEffects(txtEmail, lblEmail, true, "");
+            }
+            else if(newValue.matches("^[A-Za-z0-9+_.-]+@(.+)")){
+                validateEffects(txtEmail, lblEmail, true, "");
+            }
+            else if(!newValue.matches("^[A-Za-z0-9+_.-]+@(.+)")){
+                String a = "Invalid Email";
+                validateEffects(txtEmail, lblEmail, false, a);
             }
         });
     }
@@ -651,9 +674,10 @@ public class AddBookingController implements Initializable {
     
     private void clearfields(){
          //clear all txtfields and reset all toggle btn
+        txtRname.clear();
         txtContact.clear();
         txtIC.clear();
-        txtRname.clear();
+        txtEmail.clear();
         NumNightsSpinner.getValueFactory().setValue(1);
         
         clearbtn(tb_1B); clearbtn(tb_2B); clearbtn(tb_3B); clearbtn(tb_4A); clearbtn(tb_5A);
