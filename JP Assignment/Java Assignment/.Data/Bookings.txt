@@ -1,91 +1,39 @@
 Booking ID: BID1
-Reservee Name: erw
-Contact: 011-1111111
-IC: 111111-11-1111
+Reservee Name: Test
+Contact: 012-3456789
+IC: 011111-11-1111
 Email: test@gmail.com
-Date: [2021-01-05, 2021-01-06]
+Date: [2021-01-22, 2021-01-23]
 Nights: 2
 Room No: [Room 1A, Room 2A]
-Room Count: 1
-Fee: 700.0
-Tax: 90.0
-Total Fees: 790.0
+Room Count: 2
+Fee: 1400.0
+Tax: 160.0
+Total Fees: 1560.0
 
 Booking ID: BID2
-Reservee Name: Nicholas
-Contact: 011-1111111
-IC: 111111-11-1111
-Email: test@gmail.com
-Date: [2021-01-09, 2021-01-10]
-Nights: 2
-Room No: [Room 1B, Room 2B, Room 3B, Room 8A]
-Room Count: 4
-Fee: 2800.0
-Tax: 300.0
-Total Fees: 3100.0
-
-Booking ID: BID3
-Reservee Name: test
-Contact: 011-1111111
-IC: 111111-11-1111
-Email: test@gmail.com
-Date: [2021-01-09]
+Reservee Name: John
+Contact: 012-3456798
+IC: 012354-67-8798
+Email: john@gmail.com
+Date: [2021-01-22]
 Nights: 1
-Room No: [Room 1A]
-Room Count: 1
-Fee: 350.0
-Tax: 45.0
-Total Fees: 395.0
-
-Booking ID: BID4
-Reservee Name: damn
-Contact: 011-1111111
-IC: 111111-11-1111
-Email: test@gmail.com
-Date: [2021-01-11]
-Nights: 1
-Room No: [Room 2A]
-Room Count: 1
-Fee: 350.0
-Tax: 45.0
-Total Fees: 395.0
-
-Booking ID: BID5
-Reservee Name: John Doe Johnson
-Contact: 012-3333333
-IC: 010815-14-0293
-Email: test@gmail.com
-Date: [2021-01-05, 2021-01-06, 2021-01-07]
-Nights: 3
-Room No: [Room 10A, Room 5B, Room 4B]
-Room Count: 3
-Fee: 3150.0
-Tax: 345.0
-Total Fees: 3495.0
-
-Booking ID: BID6
-Reservee Name: Trump
-Contact: 011-1111111
-IC: 111111-11-1111
-Email: trump@gmail.com
-Date: [2021-01-31]
-Nights: 1
-Room No: [Room 8B]
-Room Count: 1
-Fee: 350.0
-Tax: 45.0
-Total Fees: 395.0
-
-Booking ID: BID7
-Reservee Name: test
-Contact: 011-1111111
-IC: 111111-11-1111
-Email: test@gmail.com
-Date: [2021-01-31]
-Nights: 1
-Room No: [Room 9B, Room 10B]
+Room No: [Room 8A, Room 9A]
 Room Count: 2
 Fee: 700.0
 Tax: 80.0
 Total Fees: 780.0
+
+Booking ID: BID3
+Reservee Name: Cena
+Contact: 012-3456789
+IC: 012354-64-8797
+Email: cena@hotmail.com
+Date: [2021-01-23, 2021-01-24]
+Nights: 2
+Room No: [Room 8A, Room 3B]
+Room Count: 2
+Fee: 1400.0
+Tax: 160.0
+Total Fees: 1560.0
 

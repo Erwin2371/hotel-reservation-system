@@ -40,6 +40,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -170,6 +171,13 @@ public class BookingInfoController implements Initializable {
         countRoom();
         spinnerListener();
         searchChoice();
+        txtDate.setDayCellFactory(picker -> new DateCell(){ //disable past dates
+            public void updateItem(LocalDate date, boolean empty){
+                super.updateItem(date, empty);
+                LocalDate today = LocalDate.now();
+                setDisable(empty || date.compareTo(today)< 0);
+            }
+        });
         lblFees.setText(null); lblTax.setText(null); lblTotalfees.setText(null);
     }   
     
@@ -185,7 +193,7 @@ public class BookingInfoController implements Initializable {
     
     @FXML
     private void Back(MouseEvent event) throws IOException {
-        Parent HomeView = FXMLLoader.load(getClass().getResource("Home.fxml"));
+        Parent HomeView = FXMLLoader.load(getClass().getResource("FXML/Home.fxml"));
         Scene HomeViewScene = new Scene(HomeView);
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
@@ -563,24 +571,28 @@ public class BookingInfoController implements Initializable {
                         }
                     }
                 }
-                if(!searchDate.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room
-                    for(int i=0; i<r.size(); i++){
-                        if(!newRoomList.contains(r.get(i)) && !sameDR.contains(r.get(i))){ //remove rooms not booked on same days
-                            searchRoom.remove(r.get(i));
-                        }
-                        if((newRoomList.contains(r.get(i)) && searchRoom.contains(r.get(i)))){
-                            searchRoom.remove(r.get(i));
-                        }
-                    }
-                }
                 while(itr.hasNext()){
                     String z = (String)itr.next(); //when search, the z value is null 
                     if(!z.isEmpty() && date.contains(z)){ //if searchDate is not empty and the date contains searchdate date then add the room
                         for(int i=0; i<r.size(); i++){
                             if(!searchRoom.contains(r.get(i)) && !id.equals(cmbBID.getValue())){ //Do not add the string if the Room already exist in the array
                                 searchRoom.add(r.get(i));
+                                System.out.println("add: " + r.get(i));
                             }
                         }    
+                    }
+                }
+                if(!searchDate.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room
+                    for(int i=0; i<r.size(); i++){
+                        if(!newRoomList.contains(r.get(i)) && !sameDR.contains(r.get(i))){ //remove rooms not booked on same duration
+                            searchRoom.remove(r.get(i));
+                            System.out.println("removed: " + r.get(i));
+
+                        }
+                        if((newRoomList.contains(r.get(i)) && searchRoom.contains(r.get(i)))){ //newRoomList contains the current booked Rooms
+                            searchRoom.remove(r.get(i));
+                            System.out.println("removed same: " + r.get(i));
+                        }
                     }
                 }
             }
@@ -595,7 +607,7 @@ public class BookingInfoController implements Initializable {
         } 
     }
     
-    private void readBID(){
+    private void readBID(){ //function to populate the combobox
         searchBID.clear();
         String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
@@ -658,7 +670,7 @@ public class BookingInfoController implements Initializable {
             a.setDisable(false);
             a.setSelected(false);
         }
-        else if(searchRoom.contains(b) && newRoomList.contains(b)){ //if both rooms overlap then cancel the room
+        if(searchRoom.contains(b) && newRoomList.contains(b)){ //if both rooms overlap then cancel the room
             a.setToggleColor(Paint.valueOf("#bf0101"));
             a.setToggleLineColor(Paint.valueOf("#ff4545"));
             a.setDisable(true);

@@ -39,6 +39,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
@@ -163,6 +164,7 @@ public class AddBookingController implements Initializable {
     private List<String> newRoomList = new ArrayList<String>(); //newRoomList and newDateList used for reading records
     private List<LocalDate> DateList;
     private List<String> newDateList;
+    private List<String>bookingDates = new ArrayList<String>();
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final SpinnerValueFactory<Integer> nightsValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31, 1); //set the spinner init, min and max value
@@ -248,16 +250,24 @@ public class AddBookingController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         main.showTime(dateTime);
         checkFile();
+        readBooking();
         spinnerListener();
         validateTxt();
         validateDays();
         countRoom();  
         updatePayment();
+        txtDate.setDayCellFactory(picker -> new DateCell(){ //disable past dates
+            public void updateItem(LocalDate date, boolean empty){
+                super.updateItem(date, empty);
+                LocalDate today = LocalDate.now();
+                setDisable(empty || date.compareTo(today)< 0);
+            }
+        });
     }    
 
     @FXML
     private void Back(MouseEvent event) throws IOException {
-        Parent HomeView = FXMLLoader.load(getClass().getResource("Home.fxml"));
+        Parent HomeView = FXMLLoader.load(getClass().getResource("FXML/Home.fxml"));
         Scene HomeViewScene = new Scene(HomeView);
         
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
@@ -391,15 +401,63 @@ public class AddBookingController implements Initializable {
         return created;
     }
     
-    private void readDate(String d){
-        int idCount = 1;
-        List<String> sameDR = new ArrayList<String>();
+    private void readBooking(){
         String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         
         try(Scanner x = new Scanner(new File(file + curFile))){
             x.useDelimiter("\n");
             
+            while(x.hasNext()){
+                id = x.next().substring(12);
+                name = x.next().substring(15);
+                contact = x.next().substring(9);
+                ic = x.next().substring(4);
+                email = x.next().substring(7);
+                date = x.next();
+                nightCount = x.next().substring(8);
+                rooms = x.next().substring(9);
+                roomCount = x.next().substring(12);
+                fee = x.next().substring(5);
+                tax = x.next().substring(5);
+                total = x.next().substring(12);
+                x.next();
+
+                String a = rooms.replaceAll("\\[", "").replaceAll("\\]", "");
+                String b = date.substring(6).replaceAll("\\[", "").replaceAll("\\]", "");
+                List<String> r = Arrays.asList(a.split(", "));
+                List<String> q = Arrays.asList(b.split(", "));
+                
+                if(date.matches(".*Date:.*")){
+                    for(int i=0;i<q.size();i++){
+                        if(!bookingDates.contains(q.get(i))){ //function to get all the booked dates and put it in an array
+                            bookingDates.add(q.get(i));
+                        }
+                    }
+                }
+            }
+                
+        } catch (Exception ex) {
+            Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+    }
+    private void readDate(String d){
+        int idCount = 1;
+        readBooking(); //get the bookingDates first
+        List<String> sameDR = new ArrayList<String>(); //temporary array to store rooms that are booked on the same day as selected in the datepicker if the date contains in the records
+        List<String> rm = new ArrayList<String>(); //temporary array to store rooms when the number spinner is change 
+        List<String>temp = new ArrayList<String>(newDateList); //temporary array to store date if datepicker selected a date without bookings
+        String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
+        String roomCount; String fee; String tax; String total;
+        System.out.println("bookingDate: " + bookingDates);
+        //bug fixed choosing a date which do not have any bookings
+        try(Scanner x = new Scanner(new File(file + curFile))){
+            x.useDelimiter("\n");
+            if(!x.hasNext()){
+                bd.setID(idCount);
+                System.out.println("BID: " + bd.getID());
+            }
             while(x.hasNext()){
                 id = x.next().substring(12);
                 name = x.next().substring(15);
@@ -421,15 +479,27 @@ public class AddBookingController implements Initializable {
                 List<String> q = Arrays.asList(b.split(", "));
                 if(id.matches(".*BID.*")){
                     idCount++;
-                    if(idCount >= bd.getID()){
-                        bd.setID(idCount);
-                    }
+                    bd.setID(idCount);
+                    System.out.println("BID: " + bd.getID());
                 }
                 if(date.contains(d)){
                     for(int i=0; i<r.size(); i++){
                         if(!sameDR.contains(r.get(i))){
                             sameDR.add(r.get(i));
                         }
+                    }
+                }
+                else if(!date.contains(d) && !temp.isEmpty()){ //add rooms that are contains the dates in temp array from the text file
+                    Iterator tmpitr = temp.iterator();
+                    while(tmpitr.hasNext()){
+                        String y = (String)tmpitr.next();
+                        if(date.contains(y)){
+                            for(int i=0; i<r.size(); i++){
+                                if(!rm.contains(r.get(i))){ //Do not add the room if the Room already exist in the array
+                                    rm.add(r.get(i));
+                                }
+                            } 
+                        }   
                     }
                 }
                 Iterator itr = newDateList.iterator();
@@ -443,16 +513,33 @@ public class AddBookingController implements Initializable {
                             }
                         } 
                     }
+                    if(!bookingDates.contains(d)){ //remove the date from temp if the bookingDate do not contain the element from newRoomList
+                        if(!bookingDates.contains(z)){ 
+                           temp.remove(z); 
+                        }                      
+                    }
                 }
-                System.out.println("sameDR: " + sameDR);
-                for(int i=0; i<r.size(); i++){//if the array doesn't have the first date searched from the text then remove the room
-                    if(!newDateList.contains(q.get(0))&&!sameDR.contains(r.get(i))){ //remove the room if searchDate does not contain the date
-                          newRoomList.remove(r.get(i)); 
+//                System.out.println("sameDR: " + sameDR);
+//                System.out.println("temp: " + temp);
+
+                for(int i=0; i<r.size(); i++){
+                    if(bookingDates.contains(d) && !newDateList.contains(q.get(0))&&!sameDR.contains(r.get(i))){ //remove the room not booked on same days if bookingDate contains the date selected in datepicker
+                        newRoomList.remove(r.get(i)); 
+                        System.out.println("removed: " + r.get(i));
+                    }
+                    else if(!bookingDates.contains(d)){ //if bookingDate doesn't have the date selected from datepicker then 
+                        if(!temp.contains(q.get(0)) && !rm.contains(r.get(i))){
+                            System.out.println("removed tmp: " + r.get(i));
+                            newRoomList.remove(r.get(i)); 
+                        }
                     }
                 }                    
+                System.out.println("rm:" + rm);
                 checkContain();
             }
+            System.out.println("sameDR: " + sameDR);
             System.out.println("newRoomList: " + newRoomList);
+ 
         } catch (Exception ex) {
             Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         }
