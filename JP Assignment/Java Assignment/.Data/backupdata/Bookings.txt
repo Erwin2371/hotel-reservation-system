@@ -1,5 +1,5 @@
 Booking ID: BID1
-Reservee Name: erw
+Reservee Name: Lenny
 Contact: 011-1111111
 IC: 111111-11-1111
 Email: test@gmail.com
@@ -38,7 +38,7 @@ Tax: 45.0
 Total Fees: 395.0
 
 Booking ID: BID4
-Reservee Name: damn
+Reservee Name: Danny
 Contact: 011-1111111
 IC: 111111-11-1111
 Email: test@gmail.com

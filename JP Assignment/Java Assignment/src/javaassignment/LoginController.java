@@ -266,9 +266,9 @@ public class LoginController implements Initializable {
                if(id.matches(".*ST.*")){
                    idCount++;
                    st.setID(idCount);
-                   System.out.println("ID: " + id);
+//                   System.out.println("ID: " + id);
                }
-            System.out.println("ID: " + id + "\n" + "Username: " + username + "\n" + "Password: " + "\n" + password);
+//            System.out.println("ID: " + id + "\n" + "Username: " + username + "\n" + "Password: " + "\n" + password);
            }   
         }  catch (IOException e) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);

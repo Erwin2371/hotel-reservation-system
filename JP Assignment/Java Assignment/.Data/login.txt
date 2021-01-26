@@ -18,15 +18,3 @@ ID: ST5
 Username: John2
 Password: iamJohn2
 
-ID: ST6
-Username: Doe
-Password: 12345678
-
-ID: ST7
-Username: Doe2
-Password: 12345679
-
-ID: ST8
-Username: John Doe
-Password: test1234
-
