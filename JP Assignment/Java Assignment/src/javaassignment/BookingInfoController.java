@@ -162,9 +162,14 @@ public class BookingInfoController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        checkFile();
-        readBID();
         setDisable();
+        try {
+            if(checkFile()){
+                readBID();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         main.showTime(dateTime);
         validateTxt();
         validateDays();
@@ -181,14 +186,25 @@ public class BookingInfoController implements Initializable {
         lblFees.setText(null); lblTax.setText(null); lblTotalfees.setText(null);
     }   
     
-    private void checkFile(){
+    private boolean checkFile() throws IOException{
+        boolean exist;
         try {
             FileReader filer = new FileReader(file + curFile);
             System.out.println("File Exist");
+            exist = true;
         } catch (FileNotFoundException ex) {
             System.out.println("File Do Not Exist");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, null, ButtonType.OK);
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get() == ButtonType.OK){
+                Parent pane = FXMLLoader.load(getClass().getResource("FXML/Home.fxml"));
+                Scene scene = new Scene(pane);
+                Stage window = new Stage();
+                window.setScene(scene);
+            }
+            exist = false;
         }
-        
+        return exist;
     }
     
     @FXML
@@ -517,7 +533,7 @@ public class BookingInfoController implements Initializable {
                     newRoomList = Arrays.asList(a.split(", "));
                     newDateList = Arrays.asList(date.split(", "));
                     txtRname.setText(name); txtContact.setText(contact); txtIC.setText(ic); txtEmail.setText(email); txtDate.setValue(LocalDate.parse(newDateList.get(0), formatter)); 
-                    NumNightsSpinner.getValueFactory().setValue(Integer.parseInt(nightCount));;lblFees.setText(fee); lblTax.setText(tax); lblTotalfees.setText(total);;
+                    NumNightsSpinner.getValueFactory().setValue(Integer.parseInt(nightCount));lblFees.setText(fee); lblTax.setText(tax); lblTotalfees.setText(total);;
                     getDays();
                     readDate(formatter.format(txtDate.getValue()));
                     cleartgbtn();
@@ -529,7 +545,6 @@ public class BookingInfoController implements Initializable {
                 else if(!found && !x.hasNext()){
                     //logic to do if the record if not found/exist
                     main.setAlert("Record Not Found", "The record you're searching for does not exist.");
-                    clearfields();
                     break;
                 }
             }    
@@ -573,13 +588,21 @@ public class BookingInfoController implements Initializable {
                 }
                 while(itr.hasNext()){
                     String z = (String)itr.next(); //when search, the z value is null 
-                    if(!z.isEmpty() && date.contains(z)){ //if searchDate is not empty and the date contains searchdate date then add the room
+                    if(!z.isEmpty() && date.contains(z) && changeSearch.isSelected()){ //if searchDate is not empty and the date contains searchdate date then add the room ~ when combobox is used to search
                         for(int i=0; i<r.size(); i++){
                             if(!searchRoom.contains(r.get(i)) && !id.equals(cmbBID.getValue())){ //Do not add the string if the Room already exist in the array
                                 searchRoom.add(r.get(i));
                                 System.out.println("add: " + r.get(i));
                             }
                         }    
+                    }
+                    else if(!z.isEmpty() && date.contains(z) && !changeSearch.isSelected()){ //if combobox search is not used
+                        for(int i=0; i<r.size(); i++){
+                            if(!searchRoom.contains(r.get(i)) && !id.equals(txtSearch.getText())){ //Do not add the string if the Room already exist in the array
+                                searchRoom.add(r.get(i));
+                                System.out.println("add: " + r.get(i));
+                            }
+                        }
                     }
                 }
                 if(!searchDate.contains(q.get(0))){ //if the array doesn't have the first date searched from the text then remove the room

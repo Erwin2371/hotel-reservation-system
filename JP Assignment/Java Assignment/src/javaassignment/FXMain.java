@@ -34,7 +34,7 @@ public class FXMain extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("FXML/Login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("FXML/BookingInfo.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setTitle("Hotel Reservation System");
         primaryStage.initStyle(StageStyle.DECORATED);

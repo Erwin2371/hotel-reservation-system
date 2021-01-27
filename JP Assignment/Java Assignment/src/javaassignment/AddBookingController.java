@@ -308,6 +308,7 @@ public class AddBookingController implements Initializable {
         } catch (FileNotFoundException e) {
             try {
                 FileWriter fw = new FileWriter(file + "\\Bookings.txt");
+                fw.close();
             } catch (IOException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -638,15 +639,17 @@ public class AddBookingController implements Initializable {
             else if(newValue.length() > 11){
                 txtContact.setText(txtContact.getText().substring(0, 11));
             }
-            else if(newValue.replaceAll("-", "").length() >= 10 && !newValue.matches("^\\d{3}-\\d{7,8}$")){
-                //validate contact format
-                txtContact.setText(txtContact.getText().replaceAll("^(\\d{3})(\\d{7,8})$", "$1-$2"));    
-                validateEffects(txtContact, lblContact, true, "");
-                cu.setContact(newValue);
-            }
             else if(newValue.replaceAll("-", "").length() == 10 && newValue.matches("^01\\d{1}-\\d{7,8}$")){
                 validateEffects(txtContact, lblContact, true, "");
                 cu.setContact(newValue);
+            }
+            else if(newValue.replaceAll("-", "").length() >= 10 && !newValue.matches("^01\\d{1}-\\d{7,8}$")){
+                //validate contact format
+                txtContact.setText(txtContact.getText().replaceAll("^(\\d{3})(\\d{7,8})$", "$1-$2"));
+                if(!newValue.matches("^01\\d{1}-\\d{7,8}$")){
+                    String a = "Invalid Contact Number";
+                    validateEffects(txtContact, lblContact, false, a);  
+                }
             }
             else if(newValue.length() < 11){
                 String a = "Invalid Contact Number";
