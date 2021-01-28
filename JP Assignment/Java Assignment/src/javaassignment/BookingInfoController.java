@@ -162,14 +162,9 @@ public class BookingInfoController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        checkFile();
+        readBID();
         setDisable();
-        try {
-            if(checkFile()){
-                readBID();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);
-        }
         main.showTime(dateTime);
         validateTxt();
         validateDays();
@@ -186,25 +181,20 @@ public class BookingInfoController implements Initializable {
         lblFees.setText(null); lblTax.setText(null); lblTotalfees.setText(null);
     }   
     
-    private boolean checkFile() throws IOException{
+    private void checkFile() {
         boolean exist;
-        try {
-            FileReader filer = new FileReader(file + curFile);
+        try (FileReader filer = new FileReader(file + curFile)){
             System.out.println("File Exist");
             exist = true;
         } catch (FileNotFoundException ex) {
-            System.out.println("File Do Not Exist");
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, null, ButtonType.OK);
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.get() == ButtonType.OK){
-                Parent pane = FXMLLoader.load(getClass().getResource("FXML/Home.fxml"));
-                Scene scene = new Scene(pane);
-                Stage window = new Stage();
-                window.setScene(scene);
+            try (FileWriter fw = new FileWriter(file + "\\Bookings.txt")){
+            } catch (IOException ex1) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex1);
             }
-            exist = false;
+            System.out.println("File Created");
+        } catch (IOException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return exist;
     }
     
     @FXML
@@ -277,6 +267,11 @@ public class BookingInfoController implements Initializable {
                 cu.setEmail(e);
                 if(saveRecord(a)){
                     main.setAlert("Save Success", "Record Saved.");
+                    clearfields();
+                    readBID(); //refresh the combobox
+                } 
+                else {
+                    main.setAlert("Save Unsuccessful", "Record Not Saved.");
                 }
             }
         }
@@ -292,6 +287,11 @@ public class BookingInfoController implements Initializable {
                 cu.setEmail(e);
                 if(saveRecord(a)){
                     main.setAlert("Save Success", "Record Saved.");
+                    clearfields();
+                    readBID(); //refresh the combobox to read BID
+                }
+                else {
+                    main.setAlert("Save Unsuccessful", "Record Not Saved.");
                 }
             }
         }
@@ -318,6 +318,11 @@ public class BookingInfoController implements Initializable {
             if(result.get() == ButtonType.YES && result.isPresent()){
                 if(removeRecord(a)){
                     main.setAlert("Delete Success", "Record Deleted");
+                    clearfields();
+                    readBID(); //refresh the combobox
+                }
+                else {
+                    main.setAlert("Delete Unsuccessful", "Record Not Deleted");
                     
                 }
             }
@@ -330,6 +335,11 @@ public class BookingInfoController implements Initializable {
             if(result.get() == ButtonType.YES && result.isPresent()){
                 if(removeRecord(b)){
                     main.setAlert("Delete Success", "Record Deleted");
+                    clearfields();
+                    readBID(); //refresh the combobox
+                }
+                else {
+                    main.setAlert("Delete Unsuccessful", "Record Not Deleted");
                     
                 }
             }
@@ -417,13 +427,14 @@ public class BookingInfoController implements Initializable {
             bw.close();
             if(oldFile.delete()){
                 System.err.println("deleted");
+                saved = true;
             }
             else if(!oldFile.delete()){
                 System.err.println("Not deleted");
+                saved = false;
             }
             File dump = new File(file + curFile);
             newFile.renameTo(dump);
-            clearfields();
         } catch (Exception ex) {
             Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         } 
@@ -475,13 +486,14 @@ public class BookingInfoController implements Initializable {
             bw.close();
             if(oldFile.delete()){
                 System.err.println("deleted");
+                deleted = true;
             }
             else if(!oldFile.delete()){
                 System.err.println("Not deleted");
+                deleted = false;
             }
             File dump = new File(file + curFile);
             newFile.renameTo(dump);
-            clearfields();
         } catch (Exception ex) {
             Logger.getLogger(BookingInfoController.class.getName()).log(Level.SEVERE, null, ex);            
         }
@@ -632,6 +644,7 @@ public class BookingInfoController implements Initializable {
     
     private void readBID(){ //function to populate the combobox
         searchBID.clear();
+        cmbBID.getItems().clear();
         String id; String name; String contact; String ic; String email; String date; String nightCount; String rooms; 
         String roomCount; String fee; String tax; String total;
         try (Scanner x = new Scanner(new FileReader(file + curFile))){
@@ -795,7 +808,11 @@ public class BookingInfoController implements Initializable {
             else if(newValue.length() > 11){
                 txtContact.setText(txtContact.getText().substring(0, 11));
             }
-            else if(newValue.replaceAll("-", "").length() >= 10 && !newValue.matches("^\\d{3}-\\d{7,8}$")){
+            else if(newValue.length() < 11){
+                String a = "Invalid Contact Number";
+                validateEffects(txtContact, lblContact, false, a);
+            }
+            else if(newValue.replaceAll("-", "").length() >= 10 && !newValue.matches("^01\\d{1}-\\d{7,8}$")){
                 //validate contact format
                 txtContact.setText(txtContact.getText().replaceAll("^(\\d{3})(\\d{7,8})$", "$1-$2"));    
                 validateEffects(txtContact, lblContact, true, "");
@@ -804,10 +821,6 @@ public class BookingInfoController implements Initializable {
             else if(newValue.replaceAll("-", "").length() == 10 && newValue.matches("^01\\d{1}-\\d{7,8}$")){
                 validateEffects(txtContact, lblContact, true, "");
                 cu.setContact(newValue);
-            }
-            else if(newValue.length() < 11){
-                String a = "Invalid Contact Number";
-                validateEffects(txtContact, lblContact, false, a);
             }
         });
         

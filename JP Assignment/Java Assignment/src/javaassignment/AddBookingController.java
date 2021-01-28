@@ -302,17 +302,16 @@ public class AddBookingController implements Initializable {
     
     private void checkFile() {
         //check file exists or not
-        try {
-            FileReader filer = new FileReader(file + "\\Bookings.txt");
+        try (FileReader filer = new FileReader(file + "\\Bookings.txt")){
             System.out.println("File Exists!");
         } catch (FileNotFoundException e) {
-            try {
-                FileWriter fw = new FileWriter(file + "\\Bookings.txt");
-                fw.close();
+            try (FileWriter fw = new FileWriter(file + "\\Bookings.txt")){
             } catch (IOException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
             System.out.println("File Created");
+        } catch (IOException ex){
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
    }
 
@@ -356,7 +355,8 @@ public class AddBookingController implements Initializable {
             //create the booking 
             if(createBooking(bd.getID(), cu.getName(), cu.getContact(), cu.getIC(), cu.getEmail(), bd.getDate(), bd.getNightCount(), RoomList, 
                     bd.getRoomCount(), bd.getFees(), bd.getTax(), bd.getTotal())){
-                main.setAlert("create Booking", "Booking Success");
+                main.setAlert("Create Booking", "Booking Success");
+                clearfields();
             }
             else{
                 main.setAlert("Create Booking", "Booking Failed");
@@ -391,7 +391,6 @@ public class AddBookingController implements Initializable {
             fw.close();
             bw.close();
             created = true;
-            clearfields();
             readDate(formatter.format(txtDate.getValue()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(AddBookingController.class.getName()).log(Level.SEVERE, null, ex);
@@ -479,6 +478,7 @@ public class AddBookingController implements Initializable {
                 List<String> r = Arrays.asList(a.split(", "));
                 List<String> q = Arrays.asList(b.split(", "));
                 if(id.matches(".*BID.*")){
+                    idCount = Integer.parseInt(id.substring(3));
                     idCount++;
                     bd.setID(idCount);
                     System.out.println("BID: " + bd.getID());
@@ -646,10 +646,6 @@ public class AddBookingController implements Initializable {
             else if(newValue.replaceAll("-", "").length() >= 10 && !newValue.matches("^01\\d{1}-\\d{7,8}$")){
                 //validate contact format
                 txtContact.setText(txtContact.getText().replaceAll("^(\\d{3})(\\d{7,8})$", "$1-$2"));
-                if(!newValue.matches("^01\\d{1}-\\d{7,8}$")){
-                    String a = "Invalid Contact Number";
-                    validateEffects(txtContact, lblContact, false, a);  
-                }
             }
             else if(newValue.length() < 11){
                 String a = "Invalid Contact Number";

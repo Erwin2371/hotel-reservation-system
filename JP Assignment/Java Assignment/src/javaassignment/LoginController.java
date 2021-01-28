@@ -141,13 +141,19 @@ public class LoginController implements Initializable {
                     clearfields();
                     readFile();
                 }
+                else if(!addCred(id, a, b)){
+                    main.setAlert("Registration", "User Not Created");
+                }
             }
-            if(txtPass2.isVisible()){
+            else if(txtPass2.isVisible()){
                 st.setPassword(c);
                 if(addCred(id, a, c)){ //create staff
                     main.setAlert("Registration", "User Successfully Created");
                     clearfields();
                     readFile();
+                }
+                else if(!addCred(id, a, b)){
+                    main.setAlert("Registration", "User Not Created");
                 }
             }
         }
@@ -164,26 +170,25 @@ public class LoginController implements Initializable {
         }
     }
     
-    private void checkFile() {
+     private void checkFile() {
         //check if the file exists in the folder
-        try {
-            FileReader filer = new FileReader(file + "\\Login.txt");
+        try (FileReader filer = new FileReader(file + "\\Login.txt")){
             System.err.println("File exists!");
         } catch (FileNotFoundException e) {
-            try {
-                FileWriter fw = new FileWriter(file + "\\Login.txt");
+            try (FileWriter fw = new FileWriter(file + "\\Login.txt");){
+                System.out.println("file Created");
             } catch (IOException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("file Created");
+        }  catch (IOException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     private boolean addCred(int id, String uname, String pass) {
         //function to register staff
         boolean created = false;
-        try {
-            FileWriter fw = new FileWriter(file + "\\Login.txt", true);
+        try (FileWriter fw = new FileWriter(file + "\\Login.txt", true)){
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter pw = new PrintWriter(bw);
            
