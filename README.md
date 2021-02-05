@@ -45,12 +45,14 @@ To check the booking details and staff login credentials locate the .Data folder
 ```
 \JP Assignment\Java Assignment\.Data\
 ```
+<br/><br/>
 
 ### Running the Program
 To run the program locate the path to **FXMain.java**:
 ```
 \JP Assignment\Java Assignment\src\javaassignment\FXMain.java
 ```
+<br/><br/>
 
 ### Modifying FXML UI
 To edit the UI using SceneBuilder locate **FXML** folder and select the fxml file:
