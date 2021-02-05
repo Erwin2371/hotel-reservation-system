@@ -19,16 +19,20 @@ Project is created with:
 
 ## Overview
 ### Login
-![Login](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Login.png)<br/><br/><br/><br/>
+-----------
+![Login](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Login.png)<br/><br/><br/>
 
 ### Home
-![Home](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Home.png)<br/>        
+------------
+![Home](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Home.png)<br/><br/><br/>
 
 ### Create Booking
-![Create Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Add%20Booking.png)<br/>
+--------------------
+![Create Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Add%20Booking.png)<br/><br/><br/>
 
 ### Modify Booking
-![Modify Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Modify%20Booking.png)<br/>
+--------------------
+![Modify Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Modify%20Booking.png)<br/><br/><br/>
 
 ## To Get Started
 1. [Booking and Login Details](###Booking-and-Staff-Data)
