@@ -19,6 +19,10 @@ Project is created with:
 * Displays Total Rooms Booked for Current Date
 
 ## Overview
+1. [Login](#login)
+2. [Home](#home)
+3. [Create Booking](#create-booking)
+4. [Modify Booking](#modify-booking)
 ### Login
 ![Login](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/Screenshots/Hotel%20Reservation%20System%20Login.png)
 <br/><br/><br/>
