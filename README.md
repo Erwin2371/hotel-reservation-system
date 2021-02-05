@@ -7,7 +7,7 @@ Project is created with:
 * [JFeonix for Java 8](https://github.com/sshahine/JFoenix)
 * [SceneBuilder for Java 8](https://gluonhq.com/products/scene-builder/)
 * [fontawesomefx](https://bitbucket.org/Jerady/fontawesomefx/downloads/fontawesomefx-8.9.jar)
-*[JavaFX](https://gluonhq.com/products/javafx/)
+* [JavaFX](https://gluonhq.com/products/javafx/)
 
 ## Features
 * Sign Up 
