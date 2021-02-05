@@ -1,9 +1,10 @@
 # Java Assignment - Hotel Booking Reservation System
-A hotel booking system built on:
+## Technologies
+Project is created with:
 *Java 8
 *[Jfeonix for Java 8](https://github.com/sshahine/JFoenix)
 *[SceneBuilder for Java 8](https://gluonhq.com/products/scene-builder/)
-*{fontawesomefx}(https://bitbucket.org/Jerady/fontawesomefx/downloads/fontawesomefx-8.9.jar)
+*[fontawesomefx](https://bitbucket.org/Jerady/fontawesomefx/downloads/fontawesomefx-8.9.jar)
 
 ## Features
 *Sign Up 
