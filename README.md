@@ -35,9 +35,9 @@ Project is created with:
 <br/><br/><br/>
 
 ## To Get Started
-1. [Booking and Login Details](###booking-and-staff-data)
-2. [Running the Program](###running-the-program)
-3. [Modifying FXML UI](###modifying-fxml-ui)
+1. [Booking and Login Details](###-booking-and-staff-data)
+2. [Running the Program](###-running-the-program)
+3. [Modifying FXML UI](###-modifying-fxml-ui)
 <br/><br/><br/>
 
 ### Booking and Staff Data 
