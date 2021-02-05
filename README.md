@@ -1,4 +1,4 @@
-# Java Assignment - Hotel Booking Reservation System
+# Hotel Booking Reservation System
 A Hotel Booking System capable of booking up to 20 rooms per day
 
 ## Technologies & Dependencies
