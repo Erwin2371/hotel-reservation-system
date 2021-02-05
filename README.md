@@ -61,7 +61,7 @@ $ git clone https://github.com/Erwin2371/java-hotel-reservation-system.git
 <br/>
 
 4. To edit the UI using SceneBuilder locate **FXML** folder and select the fxml file:
-Netbeans and IntelliJ both able to integrate SceneBuilder to edit the fxml files.
+  * Netbeans and IntelliJ both able to integrate SceneBuilder to edit the fxml files.
 ```
 \JP Assignment\src\javaassignment\FXML
 ```
