@@ -33,3 +33,6 @@ To check the booking details and staff login credentials locate the .Data folder
 ```
 /JP Assignment/Java Assignment/.Data
 ```
+
+To run the program locate the path to **FXMain.java**:
+-------------------------------------------------------
