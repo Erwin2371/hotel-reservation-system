@@ -22,7 +22,7 @@ Project is created with:
 ![Login](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Login.png)<br/><br/><br/><br/>
 
 ### Home
-![Home](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Home.png)<br/>
+![Home](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Home.png)<br/>        
 
 ### Create Booking
 ![Create Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/JP%20Assignment/Screenshots/Hotel%20Reservation%20System%20Add%20Booking.png)<br/>
