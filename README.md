@@ -42,9 +42,15 @@ Project is created with:
 <br/><br/><br/>
 
 ## To Get Started
-1. [Booking and Login Details](#booking-and-staff-data)
-2. [Running the Program](#running-the-program)
-3. [Modifying FXML UI](#modifying-fxml-ui)
+1.  Git clone this project
+```
+$ git clone https://github.com/Erwin2371/java-hotel-reservation-system.git
+```
+
+
+2. [Booking and Login Details](#booking-and-staff-data)
+3. [Running the Program](#running-the-program)
+4. [Modifying FXML UI](#modifying-fxml-ui)
 <br/><br/><br/>
 
 ### Booking and Staff Data 
@@ -66,4 +72,5 @@ To edit the UI using SceneBuilder locate **FXML** folder and select the fxml fil
 ```
 \JP Assignment\src\javaassignment\FXML
 ```
+Netbeans and IntelliJ both able to integrate SceneBuilder to edit the fxml files.
 <br/><br/>
