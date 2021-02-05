@@ -3,6 +3,7 @@ A Hotel Booking System capable of booking up to 20 rooms per day
 
 ## Technologies & Dependencies
 Project is created with:
+* [Netbeans](https://netbeans.apache.org/download/index.html)
 * [Java 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html)
 * [JFeonix for Java 8](https://github.com/sshahine/JFoenix)
 * [SceneBuilder for Java 8](https://gluonhq.com/products/scene-builder/)
@@ -43,20 +44,20 @@ Project is created with:
 ### Booking and Staff Data 
 To check the booking details and staff login credentials locate the .Data folder:
 ```
-\JP Assignment\Java Assignment\.Data\
+\JP Assignment\.Data\
 ```
 <br/><br/>
 
 ### Running the Program
 To run the program locate the path to **FXMain.java**:
 ```
-\JP Assignment\Java Assignment\src\javaassignment\FXMain.java
+\JP Assignment\src\javaassignment\FXMain.java
 ```
 <br/><br/>
 
 ### Modifying FXML UI
 To edit the UI using SceneBuilder locate **FXML** folder and select the fxml file:
 ```
-\JP Assignment\Java Assignment\src\javaassignment\FXML
+\JP Assignment\src\javaassignment\FXML
 ```
 <br/><br/>
