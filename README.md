@@ -46,19 +46,23 @@ Project is created with:
 ```
 $ git clone https://github.com/Erwin2371/java-hotel-reservation-system.git
 ```
+<br/>
 
 2. To check the booking details and staff login credentials locate the .Data folder:
 ```
 \JP Assignment\.Data\
 ```
+<br/>
 
 3. To run the program locate the path to **FXMain.java**:
 ```
 \JP Assignment\src\javaassignment\FXMain.java
 ```
+<br/>
 
 4. To edit the UI using SceneBuilder locate **FXML** folder and select the fxml file:
 ```
 \JP Assignment\src\javaassignment\FXML
 ```
 Netbeans and IntelliJ both able to integrate SceneBuilder to edit the fxml files.
+<br/>
