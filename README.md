@@ -1,6 +1,4 @@
-# Hotel Booking Reservation System
 
-A hotel booking system that allows bookings up to 20 rooms per day
 
 ## Technologies & Dependencies
 
