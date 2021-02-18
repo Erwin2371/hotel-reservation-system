@@ -1,5 +1,5 @@
 # Hotel Booking Reservation System
-A Hotel Booking System capable of booking up to 20 rooms per day
+A hotel booking system that allows bookings up to 20 rooms per day
 
 ## Technologies & Dependencies
 Project is created with:
