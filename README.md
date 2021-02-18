@@ -1,7 +1,9 @@
 # Hotel Booking Reservation System
+
 A hotel booking system that allows bookings up to 20 rooms per day
 
 ## Technologies & Dependencies
+
 Project is created with:
 * [Netbeans](https://netbeans.apache.org/download/index.html)
 * [Java 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html)
@@ -11,6 +13,7 @@ Project is created with:
 * [JavaFX](https://gluonhq.com/products/javafx/)
 
 ## Features
+
 * Sign Up 
 * Sign In
 * Search Booking
@@ -19,6 +22,7 @@ Project is created with:
 * Displays Total Rooms Booked for Current Date
 
 ## Overview
+
 1. [Login](#login)
 2. [Home](#home)
 3. [Create Booking](#create-booking)
@@ -26,22 +30,27 @@ Project is created with:
 <br/><br/><br/>
 
 ### Login
+
 ![Login](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/Screenshots/Hotel%20Reservation%20System%20Login.png)
 <br/><br/><br/>
 
 ### Home
+
 ![Home](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/Screenshots/Hotel%20Reservation%20System%20Home.png)
 <br/><br/><br/>
 
 ### Create Booking
+
 ![Create Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/Screenshots/Hotel%20Reservation%20System%20Add%20Booking.png)
 <br/><br/><br/>
 
 ### Modify Booking
+
 ![Modify Booking](https://github.com/Erwin2371/java-hotel-reservation-system/blob/main/Screenshots/Hotel%20Reservation%20System%20Modify%20Booking.png)
 <br/><br/><br/>
 
 ## To Get Started
+
 1.  Git clone this project
 ```
 $ git clone https://github.com/Erwin2371/java-hotel-reservation-system.git
